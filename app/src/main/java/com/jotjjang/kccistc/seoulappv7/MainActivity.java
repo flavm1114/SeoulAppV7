@@ -104,11 +104,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            VideoFragment replaceVideoFragment = new VideoFragment();
-            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
-            replaceVideoFragment.setVideo("9oHrFmCm45Q");
-            videoFragment = replaceVideoFragment;
+        if (id == R.id.setting_today) {
+//            VideoFragment replaceVideoFragment = new VideoFragment();
+//            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
+//            replaceVideoFragment.setVideo("9oHrFmCm45Q");
+//            videoFragment = replaceVideoFragment;
+
+
 
             return true;
         }
@@ -137,10 +139,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
@@ -217,7 +215,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private class searchTask extends AsyncTask<Void, Void, Void> {
+    private class SearchTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {

@@ -2,8 +2,59 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/setting_category1">
+        <menu>
+            <group
+                android:id="@+id/setting_menu1"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/setting_today"
+                    android:title="@string/setting_today"
+                    android:checked="true"
+                    android:checkable="true"
+                    app:showAsAction="never" />
+                <item
+                    android:id="@+id/setting_week"
+                    android:title="@string/setting_week"
+                    android:checkable="true"
+                    app:showAsAction="never" />
+                <item
+                    android:id="@+id/setting_month"
+                    android:title="@string/setting_month"
+                    android:checkable="true"
+                    app:showAsAction="never" />
+                <item
+                    android:id="@+id/setting_all"
+                    android:title="@string/setting_all"
+                    android:checkable="true"
+                    app:showAsAction="never" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/setting_category2">
+        <menu>
+            <group
+                android:id="@+id/setting_menu2"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/setting_relevance"
+                    android:title="@string/setting_relavance"
+                    android:checked="true"
+                    android:checkable="true"
+                    app:showAsAction="never" />
+                <item
+                    android:id="@+id/setting_viewCount"
+                    android:title="@string/setting_viewCount"
+                    android:checkable="true"
+                    app:showAsAction="never" />
+                <item
+                    android:id="@+id/setting_rating"
+                    android:title="@string/setting_rating"
+                    android:checkable="true"
+                    app:showAsAction="never" />
+            </group>
+        </menu>
+    </item>
 </menu>
