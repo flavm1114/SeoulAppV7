@@ -72,12 +72,18 @@ public class VideoFragment extends YouTubePlayerFragment implements YouTubePlaye
         this.player = null;
     }
 
-    public void setVideoId(String videoId) {
+    public void setVideo(String videoId) {
         if (videoId != null && !videoId.equals(this.videoId)) {
             this.videoId = videoId;
             if (player != null) {
                 player.loadVideo(videoId);
             }
+        }
+    }
+
+    public void pauseVideo() {
+        if (player != null) {
+            player.pause();
         }
     }
 }
