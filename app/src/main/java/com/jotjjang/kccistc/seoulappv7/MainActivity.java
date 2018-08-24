@@ -158,13 +158,13 @@ public class MainActivity extends AppCompatActivity
     public void onClickClose(@SuppressWarnings("unused") View view) {
         videoListFragment.getListView().clearChoices();
         videoFragment.pauseVideo();
-        ViewPropertyAnimator animator = mainContainer.animate()
-                .translationYBy(-videoContainer.getHeight())
+        ViewPropertyAnimator animator = videoContainer.animate()
+                .translationXBy(videoContainer.getWidth())
                 .setDuration(ANIMATION_DURATION_MILLIS);
         runOnAnimationEnd(animator, new Runnable() {
             @Override
             public void run() {
-                videoContainer.setVisibility(View.VISIBLE);
+                videoContainer.setVisibility(View.GONE);
             }
         });
     }
