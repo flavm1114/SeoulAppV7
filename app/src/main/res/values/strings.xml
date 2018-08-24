@@ -10,9 +10,10 @@
     <string name="setting_today">오늘의 영상</string>
     <string name="setting_week">이번주!</string>
     <string name="setting_month">이번달!</string>
-    <string name="setting_all">전부 보기!</string>
+    <string name="setting_year">올해!</string>
+    <string name="setting_all">전체 기간!</string>
     <string name="setting_category2">정렬옵션</string>
-    <string name="setting_relavance">관련성</string>
+    <string name="setting_relevance">관련성</string>
     <string name="setting_viewCount">조회수</string>
     <string name="setting_rating">추천수</string>
 

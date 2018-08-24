@@ -6,6 +6,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ClipData;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -109,13 +110,32 @@ public class MainActivity extends AppCompatActivity
 //            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
 //            replaceVideoFragment.setVideo("9oHrFmCm45Q");
 //            videoFragment = replaceVideoFragment;
-
-
-
+            return true;
+        } else if (id == R.id.setting_week) {
+            return true;
+        } else if (id == R.id.setting_month) {
+            return true;
+        } else if (id == R.id.setting_year) {
+            return true;
+        } else if (id == R.id.setting_all) {
+            return true;
+        } else if (id == R.id.setting_relevance) {
+            return true;
+        } else if (id == R.id.setting_viewCount) {
+            return true;
+        } else if (id == R.id.setting_rating) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void SetOptionState(MenuItem item) {
+        if(item.isChecked() == false) {
+            item.setChecked(true);
+            if (item.getGroupId() == R.id.setting_group1) {
+
+            }
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -135,6 +155,7 @@ public class MainActivity extends AppCompatActivity
                     ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
                     ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
         } else if (id == R.id.nav_gallery) {
+            Menu menu = findViewById(R.id.setting_category1);
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -166,6 +187,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
     @TargetApi(16)
     private void runOnAnimationEnd(ViewPropertyAnimator animator, final Runnable runnable) {
         if (Build.VERSION.SDK_INT >= 16) {
@@ -181,7 +203,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Utility methods for layouting.
-
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
     }
