@@ -2,15 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/setting_category1"
+        android:id="@+id/setting_category_date"
         android:title="@string/setting_category1">
         <menu>
             <group
-                android:id="@+id/setting_group1"
+                android:id="@+id/setting_group_date"
                 android:checkableBehavior="single">
                 <item
                     android:id="@+id/setting_today"
                     android:title="@string/setting_today"
+                    android:checked="true"
                     app:showAsAction="never" />
                 <item
                     android:id="@+id/setting_week"
@@ -33,15 +34,16 @@
     </item>
 
     <item
-        android:id="@+id/setting_category2"
+        android:id="@+id/setting_category_order"
         android:title="@string/setting_category2">
         <menu>
             <group
-                android:id="@+id/setting_group2"
+                android:id="@+id/setting_group_order"
                 android:checkableBehavior="single">
                 <item
                     android:id="@+id/setting_relevance"
                     android:title="@string/setting_relevance"
+                    android:checked="true"
                     app:showAsAction="never" />
                 <item
                     android:id="@+id/setting_viewCount"

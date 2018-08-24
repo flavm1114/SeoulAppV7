@@ -22,8 +22,6 @@ public class MyJsonParser {
                         + "part=snippet&q=" + searchKeyWord
                         + "&key=" + DeveloperKey.DEVELOPER_KEY
                         + "&maxResults=" + count);
-        //part(snippet),  q(검색값) , key(서버키)
-
 
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;

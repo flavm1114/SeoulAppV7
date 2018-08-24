@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        setOptionState(item);
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.setting_today) {
 //            VideoFragment replaceVideoFragment = new VideoFragment();
@@ -129,11 +131,41 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void SetOptionState(MenuItem item) {
+    private void setOptionState(MenuItem item) {
         if(item.isChecked() == false) {
             item.setChecked(true);
-            if (item.getGroupId() == R.id.setting_group1) {
-
+            if (item.getGroupId() == R.id.setting_group_date) {
+                switch (item.getItemId())
+                {
+                    case R.id.setting_today:
+                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_TODAY);
+                        break;
+                    case R.id.setting_week:
+                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_WEEK);
+                        break;
+                    case R.id.setting_month:
+                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_MONTH);
+                        break;
+                    case R.id.setting_year:
+                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_YEAR);
+                        break;
+                    case R.id.setting_all:
+                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_ALL);
+                        break;
+                }
+            } else if (item.getGroupId() == R.id.setting_group_order) {
+                switch (item.getItemId())
+                {
+                    case R.id.setting_relevance:
+                        OptionSettingState.setOrderState(OptionSettingState.OrderState.ORDER_STATE_RELEVANCE);
+                        break;
+                    case R.id.setting_viewCount:
+                        OptionSettingState.setOrderState(OptionSettingState.OrderState.ORDER_STATE_VIEWCOUNT);
+                        break;
+                    case R.id.setting_rating:
+                        OptionSettingState.setOrderState(OptionSettingState.OrderState.ORDER_STATE_RATING);
+                        break;
+                }
             }
         }
     }
@@ -155,7 +187,6 @@ public class MainActivity extends AppCompatActivity
                     ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
                     ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
         } else if (id == R.id.nav_gallery) {
-            Menu menu = findViewById(R.id.setting_category1);
 
         } else if (id == R.id.nav_slideshow) {
 
