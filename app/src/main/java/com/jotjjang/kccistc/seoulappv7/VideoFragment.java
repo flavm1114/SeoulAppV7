@@ -59,7 +59,7 @@ public class VideoFragment extends YouTubePlayerFragment implements YouTubePlaye
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-        this.player = player;
+        this.player = youTubePlayer;
         player.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT | YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
         player.setOnFullscreenListener((MainActivity) getActivity());
         if (!b && videoId != null) {

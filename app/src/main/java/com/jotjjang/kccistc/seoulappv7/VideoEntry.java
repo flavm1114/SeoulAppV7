@@ -7,10 +7,10 @@ public class VideoEntry {
     //private final String channelId;
     private final String publishedDate;
     private final String description;
+    private final String channelTitle;
     private final String thumbnailUrl_default;
     //private final String thumbnailUrl_medium;
     //private final String thumbnailUrl_high;
-    private final String channelTitle;
     //private final String liveBroadcastContent;
 
     public VideoEntry(String title, String videoId, String publishedDate,

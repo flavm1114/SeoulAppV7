@@ -50,6 +50,11 @@ public class PageAdapter extends BaseAdapter{
         }
     }
 
+    public void addVideoItem(VideoEntry videoEntry) {
+        entries.add(videoEntry);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return entries.size();

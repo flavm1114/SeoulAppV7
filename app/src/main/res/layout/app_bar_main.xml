@@ -20,13 +20,37 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <merge
+    <FrameLayout
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/action_bar_size"
         >
+        <RelativeLayout
+            android:id="@+id/video_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top">
+            <fragment
+                class="com.jotjjang.kccistc.seoulappv7.VideoFragment"
+                android:id="@+id/video_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <ImageButton
+                android:id="@+id/close_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/video_fragment"
+                android:src="@android:drawable/btn_dialog" />
+        </RelativeLayout>
+        <fragment
+            class="com.jotjjang.kccistc.seoulappv7.VideoListFragment"
+            android:id="@+id/list_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    </merge>
+    </FrameLayout>
 
     <!--<android.support.design.widget.FloatingActionButton-->
         <!--android:id="@+id/fab"-->
