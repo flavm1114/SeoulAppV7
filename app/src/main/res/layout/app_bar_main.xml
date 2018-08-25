@@ -46,12 +46,21 @@
                 android:src="@android:drawable/btn_dialog"
                 android:onClick="onClickClose"/>
         </RelativeLayout>
-        <fragment
-            class="com.jotjjang.kccistc.seoulappv7.VideoListFragment"
-            android:id="@+id/list_fragment"
+        <FrameLayout
+            android:id="@+id/list_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="match_parent">
+            <fragment
+                class="com.jotjjang.kccistc.seoulappv7.VideoListFragment"
+                android:id="@+id/list_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <ProgressBar
+                android:id="@+id/loading_progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+        </FrameLayout>
     </LinearLayout>
 
     <!--<android.support.design.widget.FloatingActionButton-->

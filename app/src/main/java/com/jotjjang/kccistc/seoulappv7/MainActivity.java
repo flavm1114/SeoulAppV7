@@ -21,6 +21,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
+import android.widget.AbsListView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
@@ -29,18 +32,25 @@ import com.google.android.youtube.player.YouTubePlayer;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
-                    ,YouTubePlayer.OnFullscreenListener {
+                    ,YouTubePlayer.OnFullscreenListener
+                    ,AbsListView.OnScrollListener {
 
     // 유튜브 플레이어가 밑에서 위로 슬라이딩 되는 시간 조절 상수 입니다
     public static final int ANIMATION_DURATION_MILLIS = 300;
     /** The request code when calling startActivityForResult to recover from an API service error. */
     public static final int RECOVERY_DIALOG_REQUEST = 1;
 
-    VideoListFragment videoListFragment;
-    VideoFragment videoFragment;
-    View mainContainer;
-    View videoContainer;
-    View closeButton;
+    private VideoListFragment videoListFragment;
+    private VideoFragment videoFragment;
+    private View mainContainer;
+    private View videoContainer;
+    private View listContainer;
+    private View closeButton;
+
+
+    private ProgressBar loadingProgressBar;
+    private boolean isScrollEnd;
+    private boolean isLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +63,7 @@ public class MainActivity extends AppCompatActivity
         videoFragment.setVideo("CF_CsRTHziU");
         mainContainer = findViewById(R.id.main_container);
         videoContainer = findViewById(R.id.video_container);
+        listContainer = findViewById(R.id.list_container);
         closeButton = findViewById(R.id.close_button);
         //videoContainer.setVisibility(View.GONE);
 
@@ -69,6 +80,14 @@ public class MainActivity extends AppCompatActivity
 //                        .setAction("Action", null).show();
 //            }
 //        });
+
+
+        loadingProgressBar = findViewById(R.id.loading_progress_bar);
+        loadingProgressBar.setVisibility(View.GONE);
+        isScrollEnd = false;
+        isLoading = false;
+        videoListFragment.getListView().setOnScrollListener(this);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -187,6 +206,7 @@ public class MainActivity extends AppCompatActivity
                     ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
                     ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
         } else if (id == R.id.nav_gallery) {
+            loadingProgressBar.setVisibility(View.GONE);
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -197,6 +217,20 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && isScrollEnd && isLoading == false) {
+            // 화면이 바닦에 닿을때 처리
+            // 로딩중을 알리는 프로그레스바를 보인다.
+            loadingProgressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        isScrollEnd = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
     }
 
     @Override
