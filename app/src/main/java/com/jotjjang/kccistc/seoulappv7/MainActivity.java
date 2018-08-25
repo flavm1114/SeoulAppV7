@@ -30,6 +30,10 @@ import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
                     ,YouTubePlayer.OnFullscreenListener
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     /** The request code when calling startActivityForResult to recover from an API service error. */
     public static final int RECOVERY_DIALOG_REQUEST = 1;
 
+    //layout contents FOR activity, youtube
     private VideoListFragment videoListFragment;
     private VideoFragment videoFragment;
     private View mainContainer;
@@ -47,10 +52,22 @@ public class MainActivity extends AppCompatActivity
     private View listContainer;
     private View closeButton;
 
-
+    //progressbar, loading, scroll contents
     private ProgressBar loadingProgressBar;
     private boolean isScrollEnd;
-    private boolean isLoading;
+    private boolean isLoadingNext;
+
+    //data request contents
+    AsyncTask<?,?,?> requestTask;
+    private boolean isLoadingNew;
+    String nextPageToken;
+    private Date currentDate;
+    public static String currentDateString;
+    public static String aDayAgoDateString;
+    public static String aWeekAgoDateString;
+    public static String aMonthAgoDateString;
+    public static String aYearAgoDateString;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +76,27 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //layout contents FOR activity, youtube
         videoFragment = (VideoFragment)getFragmentManager().findFragmentById(R.id.video_fragment);
         videoFragment.setVideo("CF_CsRTHziU");
+        videoListFragment = (VideoListFragment)getFragmentManager().findFragmentById(R.id.list_fragment);
         mainContainer = findViewById(R.id.main_container);
         videoContainer = findViewById(R.id.video_container);
         listContainer = findViewById(R.id.list_container);
         closeButton = findViewById(R.id.close_button);
-        //videoContainer.setVisibility(View.GONE);
+        videoContainer.setVisibility(View.GONE);
 
-        videoListFragment = (VideoListFragment)getFragmentManager().findFragmentById(R.id.list_fragment);
-        videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
-        ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
-        ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
+        //progressbar, loading, scroll contents
+        loadingProgressBar = findViewById(R.id.loading_progress_bar);
+        loadingProgressBar.setVisibility(View.GONE);
+        isScrollEnd = false;
+        isLoadingNext = false;
+        videoListFragment.getListView().setOnScrollListener(this);
+
+        //data request contents
+        isLoadingNew = false;
+        setDateTimeForRequest();
+
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -80,14 +106,6 @@ public class MainActivity extends AppCompatActivity
 //                        .setAction("Action", null).show();
 //            }
 //        });
-
-
-        loadingProgressBar = findViewById(R.id.loading_progress_bar);
-        loadingProgressBar.setVisibility(View.GONE);
-        isScrollEnd = false;
-        isLoading = false;
-        videoListFragment.getListView().setOnScrollListener(this);
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -126,27 +144,27 @@ public class MainActivity extends AppCompatActivity
         setOptionState(item);
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.setting_today) {
-//            VideoFragment replaceVideoFragment = new VideoFragment();
-//            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
-//            replaceVideoFragment.setVideo("9oHrFmCm45Q");
-//            videoFragment = replaceVideoFragment;
-            return true;
-        } else if (id == R.id.setting_week) {
-            return true;
-        } else if (id == R.id.setting_month) {
-            return true;
-        } else if (id == R.id.setting_year) {
-            return true;
-        } else if (id == R.id.setting_all) {
-            return true;
-        } else if (id == R.id.setting_relevance) {
-            return true;
-        } else if (id == R.id.setting_viewCount) {
-            return true;
-        } else if (id == R.id.setting_rating) {
-            return true;
-        }
+//        if (id == R.id.setting_today) {
+////            VideoFragment replaceVideoFragment = new VideoFragment();
+////            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
+////            replaceVideoFragment.setVideo("9oHrFmCm45Q");
+////            videoFragment = replaceVideoFragment;
+//            return true;
+//        } else if (id == R.id.setting_week) {
+//            return true;
+//        } else if (id == R.id.setting_month) {
+//            return true;
+//        } else if (id == R.id.setting_year) {
+//            return true;
+//        } else if (id == R.id.setting_all) {
+//            return true;
+//        } else if (id == R.id.setting_relevance) {
+//            return true;
+//        } else if (id == R.id.setting_viewCount) {
+//            return true;
+//        } else if (id == R.id.setting_rating) {
+//            return true;
+//        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -157,32 +175,32 @@ public class MainActivity extends AppCompatActivity
                 switch (item.getItemId())
                 {
                     case R.id.setting_today:
-                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_TODAY);
+                        SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_TODAY);
                         break;
                     case R.id.setting_week:
-                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_WEEK);
+                        SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_WEEK);
                         break;
                     case R.id.setting_month:
-                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_MONTH);
+                        SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_MONTH);
                         break;
                     case R.id.setting_year:
-                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_YEAR);
+                        SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_YEAR);
                         break;
                     case R.id.setting_all:
-                        OptionSettingState.setDateState(OptionSettingState.DateState.DATE_STATE_ALL);
+                        SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_ALL);
                         break;
                 }
             } else if (item.getGroupId() == R.id.setting_group_order) {
                 switch (item.getItemId())
                 {
                     case R.id.setting_relevance:
-                        OptionSettingState.setOrderState(OptionSettingState.OrderState.ORDER_STATE_RELEVANCE);
+                        SearchOptionState.setOrderState(SearchOptionState.OrderState.ORDER_STATE_RELEVANCE);
                         break;
                     case R.id.setting_viewCount:
-                        OptionSettingState.setOrderState(OptionSettingState.OrderState.ORDER_STATE_VIEWCOUNT);
+                        SearchOptionState.setOrderState(SearchOptionState.OrderState.ORDER_STATE_VIEWCOUNT);
                         break;
                     case R.id.setting_rating:
-                        OptionSettingState.setOrderState(OptionSettingState.OrderState.ORDER_STATE_RATING);
+                        SearchOptionState.setOrderState(SearchOptionState.OrderState.ORDER_STATE_RATING);
                         break;
                 }
             }
@@ -195,22 +213,23 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
-                    ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
-                    ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
-            videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
-                    ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
-                    ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
-            videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
-                    ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
-                    ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
-        } else if (id == R.id.nav_gallery) {
-            loadingProgressBar.setVisibility(View.GONE);
+        if (id == R.id.nav_hot_clip) {
+//            videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
+//                    ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
+//                    ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
+//            videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
+//                    ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
+//                    ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
+//            videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
+//                    ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
+//                    ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
+        } else if (id == R.id.nav_news) {
+            SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_NEWS);
+            requestTask = new RequestTask().execute();
+        } else if (id == R.id.nav_sports) {
+            Toast.makeText(this,currentDateString,Toast.LENGTH_SHORT).show();
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_humor) {
 
         }
 
@@ -221,7 +240,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && isScrollEnd && isLoading == false) {
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && isScrollEnd && isLoadingNext == false) {
             // 화면이 바닦에 닿을때 처리
             // 로딩중을 알리는 프로그레스바를 보인다.
             loadingProgressBar.setVisibility(View.VISIBLE);
@@ -267,6 +286,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void setDateTimeForRequest()
+    {
+        long now = System.currentTimeMillis();
+        currentDate = new Date(now);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        currentDateString = sdf.format(currentDate) + ".000Z";
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DATE, -1);
+        aDayAgoDateString = sdf.format(calendar.getTime()) + ".000Z";
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DATE, -7);
+        aWeekAgoDateString = sdf.format(calendar.getTime()) + ".000Z";
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.MONTH, -1);
+        aMonthAgoDateString = sdf.format(calendar.getTime()) + ".000Z";
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.YEAR, -1);
+        aYearAgoDateString = sdf.format(calendar.getTime()) + ".000Z";
+    }
+
     // Utility methods for layouting.
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
@@ -301,7 +341,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private class SearchTask extends AsyncTask<Void, Void, Void> {
+    private class RequestTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -310,6 +350,10 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... params) {
+            if(isLoadingNew == false) {
+                isLoadingNew = true;
+                MyJsonParser.getYoutubeData(SearchOptionState.getTopicStateString(),10);
+            }
 
             return null;
         }

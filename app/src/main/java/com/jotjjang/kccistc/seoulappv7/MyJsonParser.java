@@ -16,7 +16,41 @@ import java.util.ArrayList;
 
 public class MyJsonParser {
 
-    public static JSONObject getYoutubeDate(String searchKeyWord,int count) {
+    public static JSONObject getYoutubeData(String searchKeyWord, int count) {
+        HttpGet httpGet = new HttpGet(
+                "https://www.googleapis.com/youtube/v3/search?"
+                        + "part=snippet&q=" + searchKeyWord
+                        + "&key=" + DeveloperKey.DEVELOPER_KEY
+                        + "&maxResults=" + count);
+
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            int b;
+            while((b = stream.read()) != -1)
+            {
+                stringBuilder.append((char) b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static JSONObject getYoutubeData(String searchKeyWord, String beforeDateKeyWord, String afterDateKeyWord, String orderKeyWord, int count) {
         HttpGet httpGet = new HttpGet(
                 "https://www.googleapis.com/youtube/v3/search?"
                         + "part=snippet&q=" + searchKeyWord
