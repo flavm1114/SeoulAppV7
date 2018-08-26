@@ -55,6 +55,17 @@ public class PageAdapter extends BaseAdapter{
         notifyDataSetChanged();
     }
 
+    public void clearVideoEntries() {
+        entries.clear();
+    }
+
+    public void addVideoEntries(ArrayList<VideoEntry> videoList) {
+        for(int i = 0; i < videoList.size(); i++) {
+            entries.add(videoList.get(i));
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return entries.size();

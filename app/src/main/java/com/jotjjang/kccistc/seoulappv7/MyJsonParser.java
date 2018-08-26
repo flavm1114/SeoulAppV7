@@ -1,5 +1,7 @@
 package com.jotjjang.kccistc.seoulappv7;
 
+import android.util.Log;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -55,7 +57,11 @@ public class MyJsonParser {
                 "https://www.googleapis.com/youtube/v3/search?"
                         + "part=snippet&q=" + searchKeyWord
                         + "&key=" + DeveloperKey.DEVELOPER_KEY
-                        + "&maxResults=" + count);
+                        + "&publishedBefore=" + beforeDateKeyWord
+                        + "&publishedAfter=" + afterDateKeyWord
+                        + "&order=" + orderKeyWord
+                        + "&maxResults=" + count
+                        + "&regionCode=KR");
 
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;
@@ -84,8 +90,7 @@ public class MyJsonParser {
         return jsonObject;
     }
 
-    public static ArrayList<VideoEntry> parseJsonData(JSONObject jsonObject) throws JSONException{
-        ArrayList<VideoEntry> list = new ArrayList<>();
+    public static void parseJsonData(ArrayList<VideoEntry> list, JSONObject jsonObject) throws JSONException{
 
         JSONArray contacts = jsonObject.getJSONArray("items");
         for (int i = 0; i < contacts.length(); i++)
@@ -103,22 +108,23 @@ public class MyJsonParser {
                 videoId = c.getJSONObject("id").getString("playlistId");
             }
             title = c.getJSONObject("snippet").getString("title");
-            String changeString = "";
-            try {
-                changeString = new String(title.getBytes("8859_1"), "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
-            publishedDate = c.getJSONObject("snippet").getString("publishedAt").substring(0,10);
-            String imgUrl = c.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("default").getString("url");
-
             description = c.getJSONObject("snippet").getString("description");
             channelTitle = c.getJSONObject("snippet").getString("channelTitle");
 
-            list.add(new VideoEntry(changeString, videoId,publishedDate,description,channelTitle,imgUrl));
-        }
+            String changedTitle = "";
+            String changedDescription = "";
+            String changedChannelTitle = "";
+            try {
+                changedTitle = new String(title.getBytes("8859_1"), "utf-8");
+                changedDescription = new String(description.getBytes("8859_1"), "utf-8");
+                changedChannelTitle = new String(channelTitle.getBytes("8859_1"), "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            publishedDate = c.getJSONObject("snippet").getString("publishedAt").substring(0,10);
+            String imgUrl = c.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("default").getString("url");
 
-        return list;
+            list.add(new VideoEntry(changedTitle, videoId,publishedDate,changedDescription,changedChannelTitle,imgUrl));
+        }
     }
 }

@@ -30,7 +30,10 @@ import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 
+import org.json.JSONException;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     private VideoFragment videoFragment;
     private View mainContainer;
     private View videoContainer;
+    //public static int VIDEO_CONTAINER_WIDTH;
     private View listContainer;
     private View closeButton;
 
@@ -61,12 +65,7 @@ public class MainActivity extends AppCompatActivity
     AsyncTask<?,?,?> requestTask;
     private boolean isLoadingNew;
     String nextPageToken;
-    private Date currentDate;
-    public static String currentDateString;
-    public static String aDayAgoDateString;
-    public static String aWeekAgoDateString;
-    public static String aMonthAgoDateString;
-    public static String aYearAgoDateString;
+
 
 
     @Override
@@ -78,13 +77,13 @@ public class MainActivity extends AppCompatActivity
 
         //layout contents FOR activity, youtube
         videoFragment = (VideoFragment)getFragmentManager().findFragmentById(R.id.video_fragment);
-        videoFragment.setVideo("CF_CsRTHziU");
         videoListFragment = (VideoListFragment)getFragmentManager().findFragmentById(R.id.list_fragment);
         mainContainer = findViewById(R.id.main_container);
         videoContainer = findViewById(R.id.video_container);
         listContainer = findViewById(R.id.list_container);
         closeButton = findViewById(R.id.close_button);
-        videoContainer.setVisibility(View.GONE);
+        //videoContainer.setVisibility(View.GONE);
+        videoFragment.setVideo("27KAUh2c2HY");
 
         //progressbar, loading, scroll contents
         loadingProgressBar = findViewById(R.id.loading_progress_bar);
@@ -95,8 +94,7 @@ public class MainActivity extends AppCompatActivity
 
         //data request contents
         isLoadingNew = false;
-        setDateTimeForRequest();
-
+        SearchOptionState.setDateTimeForRequest();
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -214,23 +212,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_hot_clip) {
-//            videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
-//                    ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
-//                    ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
-//            videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
-//                    ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
-//                    ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
-//            videoListFragment.addVideoItem(new VideoEntry("서울 역삼동서 대형 트럭 옆으로 넘어져…강남역 방면 정체 / 연합뉴스 (Yonhapnews)"
-//                    ,"4VY-aAGT5Sg","2018-08-20","(서울=연합뉴스) 이효석 기자 = 20일 오후 1시 25분께 서울 강남구 역삼동 르네상스호텔 사거리 강남역 방향에서 대형 화물트럭이 옆으로 넘어지면서..."
-//                    ,"연합뉴스 Yonhapnews","https://i.ytimg.com/vi/4VY-aAGT5Sg/default.jpg"));
+            SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP);
+            requestTask = new RequestTask().execute();
         } else if (id == R.id.nav_news) {
             SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_NEWS);
             requestTask = new RequestTask().execute();
         } else if (id == R.id.nav_sports) {
-            Toast.makeText(this,currentDateString,Toast.LENGTH_SHORT).show();
-
+            SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SPORTS);
+            requestTask = new RequestTask().execute();
         } else if (id == R.id.nav_humor) {
-
+            SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HUMOR);
+            requestTask = new RequestTask().execute();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -243,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && isScrollEnd && isLoadingNext == false) {
             // 화면이 바닦에 닿을때 처리
             // 로딩중을 알리는 프로그레스바를 보인다.
-            loadingProgressBar.setVisibility(View.VISIBLE);
+            //loadingProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -286,27 +278,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void setDateTimeForRequest()
-    {
-        long now = System.currentTimeMillis();
-        currentDate = new Date(now);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        currentDateString = sdf.format(currentDate) + ".000Z";
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, -1);
-        aDayAgoDateString = sdf.format(calendar.getTime()) + ".000Z";
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, -7);
-        aWeekAgoDateString = sdf.format(calendar.getTime()) + ".000Z";
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.MONTH, -1);
-        aMonthAgoDateString = sdf.format(calendar.getTime()) + ".000Z";
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.YEAR, -1);
-        aYearAgoDateString = sdf.format(calendar.getTime()) + ".000Z";
-    }
-
     // Utility methods for layouting.
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
@@ -342,25 +313,43 @@ public class MainActivity extends AppCompatActivity
     }
 
     private class RequestTask extends AsyncTask<Void, Void, Void> {
+        ArrayList<VideoEntry> resultList = new ArrayList<>();
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if(isLoadingNew == false) {
+                isLoadingNew = true;
+                loadingProgressBar.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            if(isLoadingNew == false) {
-                isLoadingNew = true;
-                MyJsonParser.getYoutubeData(SearchOptionState.getTopicStateString(),10);
+            if(isLoadingNew == true) {
+                try {
+                     MyJsonParser.parseJsonData(resultList,
+                            MyJsonParser.getYoutubeData(
+                                    SearchOptionState.getTopicStateString()
+                                    , SearchOptionState.getBeforeDateStateString()
+                                    , SearchOptionState.getAfterDateStateString()
+                                    , SearchOptionState.getOrderStateString()
+                                    , 10));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
-
+            if(isLoadingNew == true) {
+                videoListFragment.clearVideoEntries();
+                videoListFragment.addVideoEntries(resultList);
+                loadingProgressBar.setVisibility(View.GONE);
+                isLoadingNew = false;
+            }
         }
     }
 }
