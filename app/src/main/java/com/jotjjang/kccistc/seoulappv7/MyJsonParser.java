@@ -90,7 +90,48 @@ public class MyJsonParser {
         return jsonObject;
     }
 
+    public static JSONObject getYoutubeData(String searchKeyWord, String beforeDateKeyWord, String afterDateKeyWord, String orderKeyWord, int count, String nextPageToken) {
+        HttpGet httpGet = new HttpGet(
+                "https://www.googleapis.com/youtube/v3/search?"
+                        + "part=snippet&q=" + searchKeyWord
+                        + "&key=" + DeveloperKey.DEVELOPER_KEY
+                        + "&publishedBefore=" + beforeDateKeyWord
+                        + "&publishedAfter=" + afterDateKeyWord
+                        + "&order=" + orderKeyWord
+                        + "&maxResults=" + count
+                        + "&regionCode=KR"
+                        + "&pageToken=" + nextPageToken);
+
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            int b;
+            while((b = stream.read()) != -1)
+            {
+                stringBuilder.append((char) b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
     public static void parseJsonData(ArrayList<VideoEntry> list, JSONObject jsonObject) throws JSONException{
+
+        SearchOptionState.setNextPageToken(jsonObject.getString("nextPageToken"));
 
         JSONArray contacts = jsonObject.getJSONArray("items");
         for (int i = 0; i < contacts.length(); i++)

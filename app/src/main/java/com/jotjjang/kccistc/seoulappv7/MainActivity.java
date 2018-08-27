@@ -59,11 +59,10 @@ public class MainActivity extends AppCompatActivity
     //progressbar, loading, scroll contents
     private ProgressBar loadingProgressBar;
     private boolean isScrollEnd;
-    private boolean isLoadingNext;
 
     //data request contents
-    AsyncTask<?,?,?> requestTask;
-    private boolean isLoadingNew;
+    AsyncTask<?,?,?> asyncTask;
+    private boolean isLoading;
     String nextPageToken;
 
 
@@ -89,11 +88,10 @@ public class MainActivity extends AppCompatActivity
         loadingProgressBar = findViewById(R.id.loading_progress_bar);
         loadingProgressBar.setVisibility(View.GONE);
         isScrollEnd = false;
-        isLoadingNext = false;
         videoListFragment.getListView().setOnScrollListener(this);
 
         //data request contents
-        isLoadingNew = false;
+        isLoading = false;
         SearchOptionState.setDateTimeForRequest();
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -113,13 +111,17 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+
+        checkYouTubeApi();
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+                drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -134,35 +136,67 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
 
         setOptionState(item);
 
         //noinspection SimplifiableIfStatement
-//        if (id == R.id.setting_today) {
-////            VideoFragment replaceVideoFragment = new VideoFragment();
-////            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
-////            replaceVideoFragment.setVideo("9oHrFmCm45Q");
-////            videoFragment = replaceVideoFragment;
-//            return true;
-//        } else if (id == R.id.setting_week) {
-//            return true;
-//        } else if (id == R.id.setting_month) {
-//            return true;
-//        } else if (id == R.id.setting_year) {
-//            return true;
-//        } else if (id == R.id.setting_all) {
-//            return true;
-//        } else if (id == R.id.setting_relevance) {
-//            return true;
-//        } else if (id == R.id.setting_viewCount) {
-//            return true;
-//        } else if (id == R.id.setting_rating) {
-//            return true;
-//        }
+        if (id == R.id.setting_today) {
+//            VideoFragment replaceVideoFragment = new VideoFragment();
+//            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
+//            replaceVideoFragment.setVideo("9oHrFmCm45Q");
+//            videoFragment = replaceVideoFragment;
+            if(isLoading == false) {
+                isLoading = true;
+                asyncTask = new RequestTask().execute();
+            }
+            return true;
+        } else if (id == R.id.setting_week) {
+            if(isLoading == false) {
+                isLoading = true;
+                asyncTask = new RequestTask().execute();
+            }
+            return true;
+        } else if (id == R.id.setting_month) {
+            if(isLoading == false) {
+                isLoading = true;
+                asyncTask = new RequestTask().execute();
+            }
+            return true;
+        } else if (id == R.id.setting_year) {
+            if(isLoading == false) {
+                isLoading = true;
+                asyncTask = new RequestTask().execute();
+            }
+            return true;
+        } else if (id == R.id.setting_all) {
+            if(isLoading == false) {
+                isLoading = true;
+                asyncTask = new RequestTask().execute();
+            }
+            return true;
+        } else if (id == R.id.setting_relevance) {
+            if(isLoading == false) {
+                isLoading = true;
+                asyncTask = new RequestTask().execute();
+            }
+            return true;
+        } else if (id == R.id.setting_viewCount) {
+            if(isLoading == false) {
+                isLoading = true;
+                asyncTask = new RequestTask().execute();
+            }
+            return true;
+        } else if (id == R.id.setting_rating) {
+            if(isLoading == false) {
+                isLoading = true;
+                asyncTask = new RequestTask().execute();
+            }
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -212,17 +246,42 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_hot_clip) {
-            SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP);
-            requestTask = new RequestTask().execute();
+            if(isLoading == false)
+            {
+                isLoading = true;
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP);
+                asyncTask = new RequestTask().execute();
+            } else
+            {
+                item.setChecked(false);
+            }
         } else if (id == R.id.nav_news) {
-            SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_NEWS);
-            requestTask = new RequestTask().execute();
+            if(isLoading == false) {
+                isLoading = true;
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_NEWS);
+                asyncTask = new RequestTask().execute();
+            } else
+            {
+                item.setChecked(false);
+            }
         } else if (id == R.id.nav_sports) {
-            SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SPORTS);
-            requestTask = new RequestTask().execute();
+            if(isLoading == false) {
+                isLoading = true;
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SPORTS);
+                asyncTask = new RequestTask().execute();
+            } else
+            {
+                item.setChecked(false);
+            }
         } else if (id == R.id.nav_humor) {
-            SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HUMOR);
-            requestTask = new RequestTask().execute();
+            if(isLoading == false) {
+                isLoading = true;
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HUMOR);
+                asyncTask = new RequestTask().execute();
+            } else
+            {
+                item.setChecked(false);
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -232,10 +291,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && isScrollEnd && isLoadingNext == false) {
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && isScrollEnd && isLoading == false) {
             // 화면이 바닦에 닿을때 처리
             // 로딩중을 알리는 프로그레스바를 보인다.
-            //loadingProgressBar.setVisibility(View.VISIBLE);
+            if(isLoading == false) {
+                isLoading = true;
+                asyncTask = new NextTask().execute();
+            }
         }
     }
 
@@ -318,38 +380,64 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(isLoadingNew == false) {
-                isLoadingNew = true;
-                loadingProgressBar.setVisibility(View.VISIBLE);
-            }
+            loadingProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            if(isLoadingNew == true) {
-                try {
-                     MyJsonParser.parseJsonData(resultList,
-                            MyJsonParser.getYoutubeData(
-                                    SearchOptionState.getTopicStateString()
-                                    , SearchOptionState.getBeforeDateStateString()
-                                    , SearchOptionState.getAfterDateStateString()
-                                    , SearchOptionState.getOrderStateString()
-                                    , 10));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            try {
+                 MyJsonParser.parseJsonData(resultList,
+                        MyJsonParser.getYoutubeData(
+                                SearchOptionState.getTopicStateString()
+                                , SearchOptionState.getBeforeDateStateString()
+                                , SearchOptionState.getAfterDateStateString()
+                                , SearchOptionState.getOrderStateString()
+                                , 10));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
-            if(isLoadingNew == true) {
-                videoListFragment.clearVideoEntries();
-                videoListFragment.addVideoEntries(resultList);
-                loadingProgressBar.setVisibility(View.GONE);
-                isLoadingNew = false;
+            videoListFragment.clearVideoEntries();
+            videoListFragment.addVideoEntries(resultList);
+            loadingProgressBar.setVisibility(View.GONE);
+            isLoading = false;
+        }
+    }
+
+    private class NextTask extends AsyncTask<Void, Void, Void> {
+        ArrayList<VideoEntry> resultList = new ArrayList<>();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loadingProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                MyJsonParser.parseJsonData(resultList,
+                        MyJsonParser.getYoutubeData(
+                                SearchOptionState.getTopicStateString()
+                                , SearchOptionState.getBeforeDateStateString()
+                                , SearchOptionState.getAfterDateStateString()
+                                , SearchOptionState.getOrderStateString()
+                                , 5, SearchOptionState.getNextPageToken()));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            videoListFragment.addVideoEntries(resultList);
+            loadingProgressBar.setVisibility(View.GONE);
+            isLoading = false;
         }
     }
 }

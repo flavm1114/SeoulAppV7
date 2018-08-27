@@ -103,7 +103,7 @@ public class PageAdapter extends BaseAdapter{
             } else {
                 // 3) The view is already created and already initialized. Simply set the right videoId
                 //    on the loader.
-                thumbnail.setImageResource(R.drawable.ic_menu_manage);
+                thumbnail.setImageResource(R.drawable.loading_thumbnail);
                 loader.setVideo(entry.getVideoId());
             }
         }
@@ -131,7 +131,7 @@ public class PageAdapter extends BaseAdapter{
                 YouTubeThumbnailView view, YouTubeThumbnailLoader loader) {
             loader.setOnThumbnailLoadedListener(this);
             thumbnailViewToLoaderMap.put(view, loader);
-            view.setImageResource(R.drawable.ic_menu_manage);
+            view.setImageResource(R.drawable.loading_thumbnail);
             String videoId = (String) view.getTag();
             loader.setVideo(videoId);
         }
@@ -139,7 +139,7 @@ public class PageAdapter extends BaseAdapter{
         @Override
         public void onInitializationFailure(
                 YouTubeThumbnailView view, YouTubeInitializationResult loader) {
-            view.setImageResource(R.drawable.ic_menu_gallery);
+            view.setImageResource(R.drawable.no_thumbnail);
         }
 
         @Override
@@ -148,7 +148,7 @@ public class PageAdapter extends BaseAdapter{
 
         @Override
         public void onThumbnailError(YouTubeThumbnailView view, YouTubeThumbnailLoader.ErrorReason errorReason) {
-            view.setImageResource(R.drawable.ic_menu_gallery);
+            view.setImageResource(R.drawable.no_thumbnail);
         }
     }
 }

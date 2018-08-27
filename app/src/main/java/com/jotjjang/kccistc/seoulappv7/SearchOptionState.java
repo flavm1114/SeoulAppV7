@@ -38,6 +38,8 @@ public class SearchOptionState {
     private static String aYearAgoDateString;
     private static String longTimeAgoDateString;
 
+    private static String nextPageToken;
+
     public static void setDateTimeForRequest()
     {
         long now = System.currentTimeMillis();
@@ -152,5 +154,13 @@ public class SearchOptionState {
         } else {
             return "";
         }
+    }
+
+    public static String getNextPageToken() {
+        return nextPageToken;
+    }
+
+    public static void setNextPageToken(String nextPageToken) {
+        SearchOptionState.nextPageToken = nextPageToken;
     }
 }
