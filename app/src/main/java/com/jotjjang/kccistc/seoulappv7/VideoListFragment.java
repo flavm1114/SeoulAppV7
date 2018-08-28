@@ -21,6 +21,7 @@ public class VideoListFragment extends ListFragment {
 
     private PageAdapter adapter;
     private View videoContainer;
+    private View mainContainer;
 
     public void addVideoItem(VideoEntry videoEntry) {
         adapter.addVideoItem(videoEntry);
@@ -52,6 +53,7 @@ public class VideoListFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
 
         videoContainer = getActivity().findViewById(R.id.video_container);
+        mainContainer = getActivity().findViewById(R.id.main_container);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         setListAdapter(adapter);
     }
@@ -95,8 +97,8 @@ public class VideoListFragment extends ListFragment {
         if (videoContainer.getVisibility() != View.VISIBLE) {
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 // Initially translate off the screen so that it can be animated in from below.
-                videoContainer.setTranslationX(videoContainer.getWidth());
-                //Log.e("gdgdddddddddddddddddddd", MainActivity.VIDEO_CONTAINER_WIDTH +"");
+                videoContainer.setTranslationX(mainContainer.getWidth());
+                // Log.e("gdgdddddddddddddddddddd",  +"");
             }
             videoContainer.setVisibility(View.VISIBLE);
         }

@@ -74,11 +74,11 @@ public class SearchOptionState {
         if (topicState == TopicState.TOPIC_STATE_HOTCLIP) {
             return "서울";
         } else if (topicState == TopicState.TOPIC_STATE_NEWS) {
-            return "서울+뉴스";
+            return "뉴스";
         } else if (topicState == TopicState.TOPIC_STATE_SPORTS) {
-            return "서울+스포츠";
+            return "스포츠";
         } else if (topicState == TopicState.TOPIC_STATE_HUMOR) {
-            return "서울+인기";
+            return "웃긴영상";
         } else {
             return "";
         }

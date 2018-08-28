@@ -63,8 +63,6 @@ public class MainActivity extends AppCompatActivity
     //data request contents
     AsyncTask<?,?,?> asyncTask;
     private boolean isLoading;
-    String nextPageToken;
-
 
 
     @Override
@@ -81,8 +79,8 @@ public class MainActivity extends AppCompatActivity
         videoContainer = findViewById(R.id.video_container);
         listContainer = findViewById(R.id.list_container);
         closeButton = findViewById(R.id.close_button);
-        //videoContainer.setVisibility(View.GONE);
-        videoFragment.setVideo("27KAUh2c2HY");
+        videoContainer.setVisibility(View.GONE);
+        //videoFragment.setVideo("27KAUh2c2HY");
 
         //progressbar, loading, scroll contents
         loadingProgressBar = findViewById(R.id.loading_progress_bar);
@@ -282,6 +280,14 @@ public class MainActivity extends AppCompatActivity
             {
                 item.setChecked(false);
             }
+        } else if (id == R.id.nav_e_sports) {
+
+        } else if (id == R.id.nav_food) {
+
+        } else if (id == R.id.nav_kpop) {
+
+        } else if (id == R.id.nav_festival) {
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -436,6 +442,40 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Void result) {
             videoListFragment.addVideoEntries(resultList);
+            loadingProgressBar.setVisibility(View.GONE);
+            isLoading = false;
+        }
+    }
+
+    private class JotJJangTask extends AsyncTask<Void, Void, Void> {
+        ArrayList<VideoEntry> resultList = new ArrayList<>();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loadingProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                MyJsonParser.parseJsonData(resultList,
+                        MyJsonParser.getYoutubeData(
+                                SearchOptionState.getTopicStateString()
+                                , SearchOptionState.getBeforeDateStateString()
+                                , SearchOptionState.getAfterDateStateString()
+                                , SearchOptionState.getOrderStateString()
+                                , 5, SearchOptionState.getNextPageToken()));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            //videoListFragment.addVideoEntries(resultList);
             loadingProgressBar.setVisibility(View.GONE);
             isLoading = false;
         }
