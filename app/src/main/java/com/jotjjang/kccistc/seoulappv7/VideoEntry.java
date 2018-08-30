@@ -1,6 +1,8 @@
 package com.jotjjang.kccistc.seoulappv7;
 
-public class VideoEntry {
+import java.io.Serializable;
+
+public class VideoEntry implements Serializable{
     private final String title;
     private final String videoId;
     //private final String etag;

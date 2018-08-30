@@ -35,19 +35,13 @@ public class VideoListFragment extends ListFragment {
         adapter.setLabelVisibility(visible);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         adapter = new PageAdapter(getActivity(), VIDEO_LIST);
     }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -57,35 +51,13 @@ public class VideoListFragment extends ListFragment {
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         setListAdapter(adapter);
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         adapter.releaseLoaders();
     }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
+
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         String videoId = VIDEO_LIST.get(position).getVideoId();
@@ -98,7 +70,6 @@ public class VideoListFragment extends ListFragment {
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 // Initially translate off the screen so that it can be animated in from below.
                 videoContainer.setTranslationX(mainContainer.getWidth());
-                // Log.e("gdgdddddddddddddddddddd",  +"");
             }
             videoContainer.setVisibility(View.VISIBLE);
         }

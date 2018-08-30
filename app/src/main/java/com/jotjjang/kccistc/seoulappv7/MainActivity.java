@@ -7,9 +7,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.ClipData;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,6 +26,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -31,15 +38,17 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
-                    ,YouTubePlayer.OnFullscreenListener
                     ,AbsListView.OnScrollListener {
 
     // 유튜브 플레이어가 밑에서 위로 슬라이딩 되는 시간 조절 상수 입니다
@@ -47,12 +56,18 @@ public class MainActivity extends AppCompatActivity
     /** The request code when calling startActivityForResult to recover from an API service error. */
     public static final int RECOVERY_DIALOG_REQUEST = 1;
 
+    public static String TOPIC_FESTIVAL="";
+    public static String TOPIC_NEWS="";
+    public static String TOPIC_SPORTS="";
+    public static String TOPIC_HUMOR="";
+    public static String TOPIC_ESPORTS="";
+    public static String TOPIC_FOOD="";
+
     //layout contents FOR activity, youtube
     private VideoListFragment videoListFragment;
     private VideoFragment videoFragment;
     private View mainContainer;
     private View videoContainer;
-    //public static int VIDEO_CONTAINER_WIDTH;
     private View listContainer;
     private View closeButton;
 
@@ -64,6 +79,7 @@ public class MainActivity extends AppCompatActivity
     AsyncTask<?,?,?> asyncTask;
     private boolean isLoading;
 
+    JSONObject json;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +96,6 @@ public class MainActivity extends AppCompatActivity
         listContainer = findViewById(R.id.list_container);
         closeButton = findViewById(R.id.close_button);
         videoContainer.setVisibility(View.GONE);
-        //videoFragment.setVideo("27KAUh2c2HY");
 
         //progressbar, loading, scroll contents
         loadingProgressBar = findViewById(R.id.loading_progress_bar);
@@ -90,7 +105,6 @@ public class MainActivity extends AppCompatActivity
 
         //data request contents
         isLoading = false;
-        SearchOptionState.setDateTimeForRequest();
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -110,9 +124,21 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-
         checkYouTubeApi();
+    }
+
+    @Override
+    protected void onResume() {
+        SearchOptionState.setDateTimeForRequest();
+        super.onResume();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RECOVERY_DIALOG_REQUEST) {
+            // Recreate the activity if user performed a recovery action
+            recreate();
+        }
     }
 
     @Override
@@ -134,71 +160,20 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-            // Handle action bar item clicks here. The action bar will
-            // automatically handle clicks on the Home/Up button, so long
-            // as you specify a parent activity in AndroidManifest.xml.
-            int id = item.getItemId();
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        setOptionState(item);
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.setting_today) {
-//            VideoFragment replaceVideoFragment = new VideoFragment();
-//            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
-//            replaceVideoFragment.setVideo("9oHrFmCm45Q");
-//            videoFragment = replaceVideoFragment;
-            if(isLoading == false) {
-                isLoading = true;
-                asyncTask = new RequestTask().execute();
-            }
+        if(setOptionState(item) == true)
+        {
             return true;
-        } else if (id == R.id.setting_week) {
-            if(isLoading == false) {
-                isLoading = true;
-                asyncTask = new RequestTask().execute();
-            }
-            return true;
-        } else if (id == R.id.setting_month) {
-            if(isLoading == false) {
-                isLoading = true;
-                asyncTask = new RequestTask().execute();
-            }
-            return true;
-        } else if (id == R.id.setting_year) {
-            if(isLoading == false) {
-                isLoading = true;
-                asyncTask = new RequestTask().execute();
-            }
-            return true;
-        } else if (id == R.id.setting_all) {
-            if(isLoading == false) {
-                isLoading = true;
-                asyncTask = new RequestTask().execute();
-            }
-            return true;
-        } else if (id == R.id.setting_relevance) {
-            if(isLoading == false) {
-                isLoading = true;
-                asyncTask = new RequestTask().execute();
-            }
-            return true;
-        } else if (id == R.id.setting_viewCount) {
-            if(isLoading == false) {
-                isLoading = true;
-                asyncTask = new RequestTask().execute();
-            }
-            return true;
-        } else if (id == R.id.setting_rating) {
-            if(isLoading == false) {
-                isLoading = true;
-                asyncTask = new RequestTask().execute();
-            }
-            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
-    private void setOptionState(MenuItem item) {
+    private boolean setOptionState(MenuItem item) {
         if(item.isChecked() == false) {
             item.setChecked(true);
             if (item.getGroupId() == R.id.setting_group_date) {
@@ -206,7 +181,6 @@ public class MainActivity extends AppCompatActivity
                 {
                     case R.id.setting_today:
                         SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_TODAY);
-                        break;
                     case R.id.setting_week:
                         SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_WEEK);
                         break;
@@ -220,6 +194,11 @@ public class MainActivity extends AppCompatActivity
                         SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_ALL);
                         break;
                 }
+                if(isLoading == false) {
+                    isLoading = true;
+                    asyncTask = new RequestTask().execute();
+                }
+                return true;
             } else if (item.getGroupId() == R.id.setting_group_order) {
                 switch (item.getItemId())
                 {
@@ -233,8 +212,14 @@ public class MainActivity extends AppCompatActivity
                         SearchOptionState.setOrderState(SearchOptionState.OrderState.ORDER_STATE_RATING);
                         break;
                 }
+                if(isLoading == false) {
+                    isLoading = true;
+                    asyncTask = new RequestTask().execute();
+                }
+                return true;
             }
         }
+        return false;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -281,15 +266,20 @@ public class MainActivity extends AppCompatActivity
                 item.setChecked(false);
             }
         } else if (id == R.id.nav_e_sports) {
-
+            //asyncTask = new KeyWordTask().execute();
         } else if (id == R.id.nav_food) {
-
+            VideoFragment replaceVideoFragment = new VideoFragment();
+            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
+            replaceVideoFragment.setVideo("9oHrFmCm45Q");
+            videoFragment = replaceVideoFragment;
         } else if (id == R.id.nav_kpop) {
+            getSupportActionBar().hide();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         } else if (id == R.id.nav_festival) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -310,11 +300,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         isScrollEnd = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
-    }
-
-    @Override
-    public void onFullscreen(boolean b) {
-
     }
 
     // 비디오 플레이어 닫기 버튼 누를시 호출 됩니다
@@ -442,40 +427,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Void result) {
             videoListFragment.addVideoEntries(resultList);
-            loadingProgressBar.setVisibility(View.GONE);
-            isLoading = false;
-        }
-    }
-
-    private class JotJJangTask extends AsyncTask<Void, Void, Void> {
-        ArrayList<VideoEntry> resultList = new ArrayList<>();
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            loadingProgressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                MyJsonParser.parseJsonData(resultList,
-                        MyJsonParser.getYoutubeData(
-                                SearchOptionState.getTopicStateString()
-                                , SearchOptionState.getBeforeDateStateString()
-                                , SearchOptionState.getAfterDateStateString()
-                                , SearchOptionState.getOrderStateString()
-                                , 5, SearchOptionState.getNextPageToken()));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            //videoListFragment.addVideoEntries(resultList);
             loadingProgressBar.setVisibility(View.GONE);
             isLoading = false;
         }

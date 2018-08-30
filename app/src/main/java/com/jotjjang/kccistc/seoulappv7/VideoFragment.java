@@ -1,6 +1,9 @@
 package com.jotjjang.kccistc.seoulappv7;
 
+import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,36 +23,6 @@ public class VideoFragment extends YouTubePlayerFragment implements YouTubePlaye
     }
 
     @Override
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        return super.onCreateView(layoutInflater, viewGroup, bundle);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
     public void onDestroy() {
         if (player != null) {
             player.release();
@@ -60,8 +33,20 @@ public class VideoFragment extends YouTubePlayerFragment implements YouTubePlaye
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
         this.player = youTubePlayer;
-        player.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT | YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
-        player.setOnFullscreenListener((MainActivity) getActivity());
+        //player.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT | YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
+        player.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
+        player.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
+            @Override
+            public void onFullscreen(boolean b) {
+                if(b == true) {
+                    //Log.e("videoplayer","true");
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    //Log.e("videoplayer","false");
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+            }
+        });
         if (!b && videoId != null) {
             player.loadVideo(videoId);
         }
@@ -81,9 +66,21 @@ public class VideoFragment extends YouTubePlayerFragment implements YouTubePlaye
         }
     }
 
+    public String getVideoId() {
+        if(videoId != null){
+            return videoId;
+        } else {
+            return "";
+        }
+    }
+
     public void pauseVideo() {
         if (player != null) {
             player.pause();
         }
+    }
+
+    public void setFullscreen(boolean b) {
+        player.setFullscreen(b);
     }
 }

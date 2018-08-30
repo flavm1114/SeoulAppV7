@@ -11,11 +11,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MyJsonParser {
 
@@ -64,18 +67,8 @@ public class MyJsonParser {
                         + "&maxResults=" + count
                         + "&regionCode=KR"
                         + "&type=video"
-                        + "&safeSearch=strict");
-
-        Log.e("getYoutubeData--URL!", "https://www.googleapis.com/youtube/v3/search?"
-                + "part=snippet&q=" + searchKeyWord
-                + "&key=" + DeveloperKey.DEVELOPER_KEY
-                + "&publishedBefore=" + beforeDateKeyWord
-                + "&publishedAfter=" + afterDateKeyWord
-                + "&order=" + orderKeyWord
-                + "&maxResults=" + count
-                + "&regionCode=KR"
-                + "&type=video"
-                + "&safeSearch=strict");
+                        + "&safeSearch=strict"
+                        + "&videoEmbeddable=true");
 
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;
@@ -116,18 +109,8 @@ public class MyJsonParser {
                         + "&regionCode=KR"
                         + "&pageToken=" + nextPageToken
                         + "&type=video"
-                        + "&safeSearch=strict");
-        Log.e("getYoutubeData2-URL!", "https://www.googleapis.com/youtube/v3/search?"
-                + "part=snippet&q=" + searchKeyWord
-                + "&key=" + DeveloperKey.DEVELOPER_KEY
-                + "&publishedBefore=" + beforeDateKeyWord
-                + "&publishedAfter=" + afterDateKeyWord
-                + "&order=" + orderKeyWord
-                + "&maxResults=" + count
-                + "&regionCode=KR"
-                + "&pageToken=" + nextPageToken
-                + "&type=video"
-                + "&safeSearch=strict");
+                        + "&safeSearch=strict"
+                        + "&videoEmbeddable=true");
 
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;
@@ -145,6 +128,8 @@ public class MyJsonParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //Log.e("gdgd", stringBuilder.toString());
 
         JSONObject jsonObject = new JSONObject();
         try {
@@ -196,8 +181,8 @@ public class MyJsonParser {
         }
     }
 
-    public static JSONObject getJotJJangKeyWord() {
-        HttpGet httpGet = new HttpGet("jotjjang.com/searchkeyword");
+    public static JSONObject getJotJJang() {
+        HttpGet httpGet = new HttpGet("http://jotjjang.com/seoulApp");
 
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;
@@ -207,10 +192,13 @@ public class MyJsonParser {
             response = client.execute(httpGet);
             HttpEntity entity = response.getEntity();
             InputStream stream = entity.getContent();
-            int b;
-            while((b = stream.read()) != -1)
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
             {
-                stringBuilder.append((char) b);
+                stringBuilder.append(b);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -226,93 +214,27 @@ public class MyJsonParser {
         return jsonObject;
     }
 
-    public static void parseJotJJangKeyWord(HashMap<String,String> map, JSONObject jsonObject) throws JSONException {
-        JSONArray contacts = jsonObject.getJSONArray("items");
+    public static void parseKeyWord(HashMap<String, String> map, JSONObject jsonObject) throws JSONException {
+        JSONArray contacts = jsonObject.getJSONArray("keyword");
         for (int i = 0; i < contacts.length(); i++)
         {
-            String topic;
-            String str;
-
             JSONObject c = contacts.getJSONObject(i);
-            topic = c.getString("topic");
-            str = c.getString("string");
-
-            String changedStr = "";
-
-            try {
-                changedStr = new String(str.getBytes("8859_1"), "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            map.put(topic,str);
+            String key = c.getString("key");
+            String val = c.getString("val");
+            map.put(key,val);
         }
     }
 
-    private static JSONObject getJotJJangHotClip() {
-        HttpGet httpGet = new HttpGet(
-                "jotjjang.com/hotclip");
+    public static void parseHotClip(ArrayList<String> idList, JSONObject jsonObject) throws JSONException {
+        JSONArray contacts = jsonObject.getJSONArray("hotclip");
 
-        HttpClient client = new DefaultHttpClient();
-        HttpResponse response;
-        StringBuilder stringBuilder = new StringBuilder();
-
-        try {
-            response = client.execute(httpGet);
-            HttpEntity entity = response.getEntity();
-            InputStream stream = entity.getContent();
-            int b;
-            while((b = stream.read()) != -1)
-            {
-                stringBuilder.append((char) b);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (int i = 0; i < contacts.length(); i++)
+        {
+            JSONObject c = contacts.getJSONObject(i);
+            String id = c.getString("id");
+            idList.add(id);
         }
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject = new JSONObject(stringBuilder.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jsonObject;
     }
 
-    private static JSONObject getJotJJangYoutube() {
-        HttpGet httpGet = new HttpGet(
-                "jotjjang.com/hotclip");
-
-        HttpClient client = new DefaultHttpClient();
-        HttpResponse response;
-        StringBuilder stringBuilder = new StringBuilder();
-
-        try {
-            response = client.execute(httpGet);
-            HttpEntity entity = response.getEntity();
-            InputStream stream = entity.getContent();
-            int b;
-            while((b = stream.read()) != -1)
-            {
-                stringBuilder.append((char) b);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject = new JSONObject(stringBuilder.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jsonObject;
-    }
-
-
-    public static void parseJotJJangYoutube(ArrayList<VideoEntry> list, JSONObject jsonObject) throws JSONException{
-
-
-    }
+    ///여기 비디오 watch키워드로 한개만 가져오는 부분 하자(핫클립도 통합) + 조회수 가져오기위해서
 }
