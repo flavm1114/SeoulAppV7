@@ -227,14 +227,76 @@ public class MyJsonParser {
 
     public static void parseHotClip(ArrayList<String> idList, JSONObject jsonObject) throws JSONException {
         JSONArray contacts = jsonObject.getJSONArray("hotclip");
-
         for (int i = 0; i < contacts.length(); i++)
         {
             JSONObject c = contacts.getJSONObject(i);
             String id = c.getString("id");
             idList.add(id);
+
         }
     }
 
     ///여기 비디오 watch키워드로 한개만 가져오는 부분 하자(핫클립도 통합) + 조회수 가져오기위해서
+
+    public static JSONObject getOenYoutube(String videoId) {
+        //https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=YU84DkyGaXc&key=AIzaSyDM6uBp-0NoUf9OvBWIMze6Z3wYUv2XimM
+        HttpGet httpGet = new HttpGet(
+                "https://www.googleapis.com/youtube/v3/videos"
+                    + "?part=snippet,statistics"
+                    + "&id=" + videoId
+                    + "&key=" + DeveloperKey.DEVELOPER_KEY);
+
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
+            {
+                stringBuilder.append(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static VideoEntry parseOneYoutube(JSONObject jsonObject) throws JSONException {
+        JSONArray contacts = jsonObject.getJSONArray("items");
+        JSONObject c = contacts.getJSONObject(0);
+        JSONObject snippet = c.getJSONObject("snippet");
+        JSONObject statistics = c.getJSONObject("statistics");
+
+        String title = null;
+        String description = null;
+        String channelTitle = null;
+        try {
+            title = new String(snippet.getString("title").getBytes("8859_1"), "utf-8");
+            description = new String(snippet.getString("description").getBytes("8859_1"), "utf-8");
+            channelTitle = new String(snippet.getString("channelTitle").getBytes("8859_1"), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String videoId = c.getString("id");
+        String publishedDate = snippet.getString("publishedAt").substring(0,10);
+        String imgUrl = snippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
+        int viewCount = Integer.parseInt(statistics.getString("viewCount"));
+
+        return new VideoEntry(title,videoId,publishedDate,description,channelTitle,imgUrl,viewCount);
+    }
 }

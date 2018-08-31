@@ -14,6 +14,7 @@ public class VideoEntry implements Serializable{
     //private final String thumbnailUrl_medium;
     //private final String thumbnailUrl_high;
     //private final String liveBroadcastContent;
+    private  int viewCount;
 
     public VideoEntry(String title, String videoId, String publishedDate,
                       String description, String channelTitle, String thumbnailUrl_default)
@@ -24,6 +25,19 @@ public class VideoEntry implements Serializable{
         this.description = description;
         this.channelTitle = channelTitle;
         this.thumbnailUrl_default = thumbnailUrl_default;
+        this.viewCount = 0;
+    }
+
+    public VideoEntry(String title, String videoId, String publishedDate,
+                      String description, String channelTitle, String thumbnailUrl_default, int viewCount)
+    {
+        this.title = title;
+        this.videoId = videoId;
+        this.publishedDate = publishedDate;
+        this.description = description;
+        this.channelTitle = channelTitle;
+        this.thumbnailUrl_default = thumbnailUrl_default;
+        this.viewCount = viewCount;
     }
 
     public String getThumbnailUrl_default() {
@@ -49,4 +63,8 @@ public class VideoEntry implements Serializable{
     public String getTitle() {
         return title;
     }
+
+    public int getViewCount() { return viewCount; }
+
+    public void setViewCount(int viewCount) { this.viewCount = viewCount; }
 }

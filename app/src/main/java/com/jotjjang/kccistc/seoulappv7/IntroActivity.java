@@ -34,21 +34,30 @@ public class IntroActivity extends Activity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            JSONObject jsonObject = MyJsonParser.getJotJJang();
+            JSONObject jotJJangObject = MyJsonParser.getJotJJang();
 
             try {
-                MyJsonParser.parseKeyWord(map,jsonObject);
+                MyJsonParser.parseKeyWord(map, jotJJangObject);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             try {
-                MyJsonParser.parseHotClip(idList, jsonObject);
+                MyJsonParser.parseHotClip(idList, jotJJangObject);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-
+            for(int i = 0; i < idList.size(); i++) {
+                JSONObject jsonObject = MyJsonParser.getOenYoutube(idList.get(i));
+                VideoEntry entry = null;
+                try {
+                    entry = MyJsonParser.parseOneYoutube(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                entryList.add(entry);
+            }
 
             return null;
         }
