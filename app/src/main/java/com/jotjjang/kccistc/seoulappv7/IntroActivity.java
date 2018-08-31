@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,13 +50,20 @@ public class IntroActivity extends Activity {
             }
 
             for(int i = 0; i < idList.size(); i++) {
-                JSONObject jsonObject = MyJsonParser.getOenYoutube(idList.get(i));
+                JSONObject jsonObject = MyJsonParser.getOneYoutube(idList.get(i));
                 VideoEntry entry = null;
                 try {
                     entry = MyJsonParser.parseOneYoutube(jsonObject);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Log.e("gdgd"+i, entry.getTitle());
+                Log.e("gdgd"+i, entry.getVideoId());
+                Log.e("gdgd"+i, entry.getDescription());
+                Log.e("gdgd"+i, entry.getPublishedDate());
+                Log.e("gdgd"+i, entry.getThumbnailUrl_default());
+                Log.e("gdgd"+i, entry.getChannelTitle());
+                Log.e("gdgd"+i, entry.getViewCount()+"");
                 entryList.add(entry);
             }
 

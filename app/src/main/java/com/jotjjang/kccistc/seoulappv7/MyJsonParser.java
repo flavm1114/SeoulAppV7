@@ -238,7 +238,7 @@ public class MyJsonParser {
 
     ///여기 비디오 watch키워드로 한개만 가져오는 부분 하자(핫클립도 통합) + 조회수 가져오기위해서
 
-    public static JSONObject getOenYoutube(String videoId) {
+    public static JSONObject getOneYoutube(String videoId) {
         //https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=YU84DkyGaXc&key=AIzaSyDM6uBp-0NoUf9OvBWIMze6Z3wYUv2XimM
         HttpGet httpGet = new HttpGet(
                 "https://www.googleapis.com/youtube/v3/videos"
@@ -282,16 +282,27 @@ public class MyJsonParser {
         JSONObject snippet = c.getJSONObject("snippet");
         JSONObject statistics = c.getJSONObject("statistics");
 
+//        String title = null;
+//        String description = null;
+//        String channelTitle = null;
+//        try {
+//            title = new String(snippet.getString("title").getBytes("8859_1"), "utf-8");
+//            description = new String(snippet.getString("description").getBytes("8859_1"), "utf-8");
+//            channelTitle = new String(snippet.getString("channelTitle").getBytes("8859_1"), "utf-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        String videoId = c.getString("id");
+//        String publishedDate = snippet.getString("publishedAt").substring(0,10);
+//        String imgUrl = snippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
+//        int viewCount = Integer.parseInt(statistics.getString("viewCount"));
+
         String title = null;
         String description = null;
         String channelTitle = null;
-        try {
-            title = new String(snippet.getString("title").getBytes("8859_1"), "utf-8");
-            description = new String(snippet.getString("description").getBytes("8859_1"), "utf-8");
-            channelTitle = new String(snippet.getString("channelTitle").getBytes("8859_1"), "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        title = snippet.getString("title");
+        description = snippet.getString("description");
+        channelTitle = snippet.getString("channelTitle");
         String videoId = c.getString("id");
         String publishedDate = snippet.getString("publishedAt").substring(0,10);
         String imgUrl = snippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
