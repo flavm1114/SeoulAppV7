@@ -31,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
@@ -56,12 +57,12 @@ public class MainActivity extends AppCompatActivity
     /** The request code when calling startActivityForResult to recover from an API service error. */
     public static final int RECOVERY_DIALOG_REQUEST = 1;
 
-    public static String TOPIC_FESTIVAL="";
-    public static String TOPIC_NEWS="";
-    public static String TOPIC_SPORTS="";
-    public static String TOPIC_HUMOR="";
-    public static String TOPIC_ESPORTS="";
-    public static String TOPIC_FOOD="";
+//    public static String TOPIC_FESTIVAL="";
+//    public static String TOPIC_NEWS="";
+//    public static String TOPIC_SPORTS="";
+//    public static String TOPIC_HUMOR="";
+//    public static String TOPIC_ESPORTS="";
+//    public static String TOPIC_FOOD="";
 
     //layout contents FOR activity, youtube
     private VideoListFragment videoListFragment;
@@ -79,7 +80,8 @@ public class MainActivity extends AppCompatActivity
     AsyncTask<?,?,?> asyncTask;
     private boolean isLoading;
 
-    JSONObject json;
+    ArrayList<VideoEntry> hotclip;
+    HashMap<String,String> mapKeyword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity
         videoContainer = findViewById(R.id.video_container);
         listContainer = findViewById(R.id.list_container);
         closeButton = findViewById(R.id.close_button);
-        videoContainer.setVisibility(View.GONE);
+        //videoContainer.setVisibility(View.GONE);
 
         //progressbar, loading, scroll contents
         loadingProgressBar = findViewById(R.id.loading_progress_bar);
@@ -105,6 +107,13 @@ public class MainActivity extends AppCompatActivity
 
         //data request contents
         isLoading = false;
+
+        Intent intent = getIntent();
+        SearchOptionState.setKeyWordMap((HashMap<String, String>) intent.getSerializableExtra("keyword"));
+        hotclip = (ArrayList<VideoEntry>) intent.getSerializableExtra("hotclip");
+        videoListFragment.clearVideoEntries();
+        videoListFragment.addVideoEntries(hotclip);
+        videoFragment.cueVideo(hotclip.get(0).getVideoId());
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +154,9 @@ public class MainActivity extends AppCompatActivity
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
+            drawer.closeDrawer(GravityCompat.START);
+        } else if (videoFragment.getIsFullScreen()) {
+            videoFragment.setFullscreen(false);
         } else {
             super.onBackPressed();
         }
@@ -156,6 +167,18 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(SearchOptionState.getTopicState() == SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP) {
+            menu.getItem(0).setEnabled(false);
+            menu.getItem(1).setEnabled(false);
+        }else {
+            menu.getItem(0).setEnabled(true);
+            menu.getItem(1).setEnabled(true);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -222,6 +245,8 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -232,7 +257,43 @@ public class MainActivity extends AppCompatActivity
             if(isLoading == false)
             {
                 isLoading = true;
+                videoListFragment.scrollToTop();
+                loadingProgressBar.setVisibility(View.VISIBLE);
+                SearchOptionState.setInitJotJJangIndex();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP);
+                videoListFragment.clearVideoEntries();
+                videoListFragment.addVideoEntries(hotclip);
+                loadingProgressBar.setVisibility(View.GONE);
+                isLoading = false;
+            } else
+            {
+                item.setChecked(false);
+            }
+        } else if (id == R.id.nav_seoul_news) {
+            if(isLoading == false) {
+                isLoading = true;
+                videoListFragment.scrollToTop();
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_NEWS);
+                asyncTask = new RequestTask().execute();
+            } else
+            {
+                item.setChecked(false);
+            }
+        } else if (id == R.id.nav_seoul_festival) {
+            if(isLoading == false) {
+                isLoading = true;
+                videoListFragment.scrollToTop();
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_FESTIVAL);
+                asyncTask = new RequestTask().execute();
+            } else
+            {
+                item.setChecked(false);
+            }
+        } else if (id == R.id.nav_seoul_food) {
+            if(isLoading == false) {
+                isLoading = true;
+                videoListFragment.scrollToTop();
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_FOOD);
                 asyncTask = new RequestTask().execute();
             } else
             {
@@ -241,6 +302,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_news) {
             if(isLoading == false) {
                 isLoading = true;
+                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_NEWS);
                 asyncTask = new RequestTask().execute();
             } else
@@ -250,6 +312,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_sports) {
             if(isLoading == false) {
                 isLoading = true;
+                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SPORTS);
                 asyncTask = new RequestTask().execute();
             } else
@@ -259,26 +322,23 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_humor) {
             if(isLoading == false) {
                 isLoading = true;
+                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HUMOR);
                 asyncTask = new RequestTask().execute();
             } else
             {
                 item.setChecked(false);
             }
-        } else if (id == R.id.nav_e_sports) {
-            //asyncTask = new KeyWordTask().execute();
-        } else if (id == R.id.nav_food) {
-            VideoFragment replaceVideoFragment = new VideoFragment();
-            getFragmentManager().beginTransaction().replace(R.id.video_container,replaceVideoFragment).commit();
-            replaceVideoFragment.setVideo("9oHrFmCm45Q");
-            videoFragment = replaceVideoFragment;
         } else if (id == R.id.nav_kpop) {
-            getSupportActionBar().hide();
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        } else if (id == R.id.nav_festival) {
-
+            if(isLoading == false) {
+                isLoading = true;
+                videoListFragment.scrollToTop();
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_KPOP);
+                asyncTask = new RequestTask().execute();
+            } else
+            {
+                item.setChecked(false);
+            }
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -290,7 +350,10 @@ public class MainActivity extends AppCompatActivity
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && isScrollEnd && isLoading == false) {
             // 화면이 바닦에 닿을때 처리
             // 로딩중을 알리는 프로그레스바를 보인다.
-            if(isLoading == false) {
+            if(isLoading == false && SearchOptionState.getTopicState() == SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP) {
+                isLoading = true;
+                asyncTask = new HotClipNextTask().execute();
+            } else if (isLoading == false && SearchOptionState.getTopicState() != SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP) {
                 isLoading = true;
                 asyncTask = new NextTask().execute();
             }
@@ -420,6 +483,42 @@ public class MainActivity extends AppCompatActivity
                                 , 5, SearchOptionState.getNextPageToken()));
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            videoListFragment.addVideoEntries(resultList);
+            loadingProgressBar.setVisibility(View.GONE);
+            isLoading = false;
+        }
+    }
+
+    private class HotClipNextTask extends AsyncTask<Void, Void, Void> {
+        ArrayList<String> idList = new ArrayList<>();
+        ArrayList<VideoEntry> resultList = new ArrayList<>();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loadingProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            JSONObject jsonObject = MyJsonParser.getJotJJangNext(SearchOptionState.getNextJotJJangIndex());
+            try {
+                MyJsonParser.parseHotClip(idList, jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            for(int i = 0; i < idList.size(); i++) {
+                try {
+                    resultList.add(MyJsonParser.parseOneYoutube(MyJsonParser.getOneYoutube(idList.get(i))));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
             return null;
         }

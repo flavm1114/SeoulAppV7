@@ -57,64 +57,19 @@ public class IntroActivity extends Activity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.e("gdgd"+i, entry.getTitle());
-                Log.e("gdgd"+i, entry.getVideoId());
-                Log.e("gdgd"+i, entry.getDescription());
-                Log.e("gdgd"+i, entry.getPublishedDate());
-                Log.e("gdgd"+i, entry.getThumbnailUrl_default());
-                Log.e("gdgd"+i, entry.getChannelTitle());
-                Log.e("gdgd"+i, entry.getViewCount()+"");
                 entryList.add(entry);
             }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
-            startActivity(new Intent(IntroActivity.this, MainActivity.class));
+            Intent intent = new Intent(IntroActivity.this, MainActivity.class);
+            intent.putExtra("keyword", map);
+            intent.putExtra("hotclip", entryList);
+
+            startActivity(intent);
             finish();
         }
     }
 }
-
-
-//    private void executeIntroTask() {
-//        IntroTask introTask = new IntroTask(new IntroTask.TaskEndListener() {
-//            @Override
-//            public void onTaskEnd(Void result) {
-//                finish();
-//            }
-//        });
-//    }
-
-//
-//class IntroTask extends AsyncTask<Void, Void, Void> {
-//    private TaskEndListener listener;
-//
-//    public IntroTask(TaskEndListener listener) {
-//        this.listener = listener;
-//    }
-//
-//    @Override
-//    protected void onPreExecute() {
-//        super.onPreExecute();
-//    }
-//
-//    @Override
-//    protected Void doInBackground(Void... params) {
-//
-//        return null;
-//    }
-//
-//    @Override
-//    protected void onPostExecute(Void result) {
-//        if (listener != null) {
-//            listener.onTaskEnd(result);
-//        }
-//    }
-//
-//    public static interface TaskEndListener<T> {
-//        public void onTaskEnd(Void result);
-//    }
-//}

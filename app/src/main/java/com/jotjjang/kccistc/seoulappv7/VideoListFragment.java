@@ -50,6 +50,7 @@ public class VideoListFragment extends ListFragment {
         mainContainer = getActivity().findViewById(R.id.main_container);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         setListAdapter(adapter);
+        getListView().setItemChecked(0,true);
     }
 
     @Override
@@ -78,6 +79,11 @@ public class VideoListFragment extends ListFragment {
         if (videoContainer.getTranslationX() > 0) {
             videoContainer.animate().translationX(0).setDuration(MainActivity.ANIMATION_DURATION_MILLIS);
         }
-        videoFragment.setVideo(videoId);
+        videoFragment.loadVideo(videoId);
+    }
+
+    public void scrollToTop() {
+        getListView().requestFocusFromTouch();
+        getListView().setSelection(0);
     }
 }

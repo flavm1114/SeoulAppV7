@@ -1,7 +1,5 @@
 package com.jotjjang.kccistc.seoulappv7;
 
-import android.util.Log;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -18,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MyJsonParser {
 
@@ -129,8 +126,6 @@ public class MyJsonParser {
             e.printStackTrace();
         }
 
-        //Log.e("gdgd", stringBuilder.toString());
-
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject = new JSONObject(stringBuilder.toString());
@@ -232,14 +227,10 @@ public class MyJsonParser {
             JSONObject c = contacts.getJSONObject(i);
             String id = c.getString("id");
             idList.add(id);
-
         }
     }
 
-    ///여기 비디오 watch키워드로 한개만 가져오는 부분 하자(핫클립도 통합) + 조회수 가져오기위해서
-
     public static JSONObject getOneYoutube(String videoId) {
-        //https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=YU84DkyGaXc&key=AIzaSyDM6uBp-0NoUf9OvBWIMze6Z3wYUv2XimM
         HttpGet httpGet = new HttpGet(
                 "https://www.googleapis.com/youtube/v3/videos"
                     + "?part=snippet,statistics"
@@ -282,21 +273,6 @@ public class MyJsonParser {
         JSONObject snippet = c.getJSONObject("snippet");
         JSONObject statistics = c.getJSONObject("statistics");
 
-//        String title = null;
-//        String description = null;
-//        String channelTitle = null;
-//        try {
-//            title = new String(snippet.getString("title").getBytes("8859_1"), "utf-8");
-//            description = new String(snippet.getString("description").getBytes("8859_1"), "utf-8");
-//            channelTitle = new String(snippet.getString("channelTitle").getBytes("8859_1"), "utf-8");
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//        String videoId = c.getString("id");
-//        String publishedDate = snippet.getString("publishedAt").substring(0,10);
-//        String imgUrl = snippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
-//        int viewCount = Integer.parseInt(statistics.getString("viewCount"));
-
         String title = null;
         String description = null;
         String channelTitle = null;
@@ -309,5 +285,38 @@ public class MyJsonParser {
         int viewCount = Integer.parseInt(statistics.getString("viewCount"));
 
         return new VideoEntry(title,videoId,publishedDate,description,channelTitle,imgUrl,viewCount);
+    }
+
+    public static JSONObject getJotJJangNext(int index) {
+        HttpGet httpGet = new HttpGet("http://jotjjang.com/seoulApp/welcome"+index+".htm");
+
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
+            {
+                stringBuilder.append(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
     }
 }

@@ -3,14 +3,20 @@ package com.jotjjang.kccistc.seoulappv7;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 public class SearchOptionState {
 
     public enum TopicState {
+        TOPIC_STATE_SEOUL_NEWS,
+        TOPIC_STATE_SEOUL_FESTIVAL,
+        TOPIC_STATE_SEOUL_FOOD,
         TOPIC_STATE_HOTCLIP,
         TOPIC_STATE_NEWS,
         TOPIC_STATE_SPORTS,
-        TOPIC_STATE_HUMOR
+        TOPIC_STATE_HUMOR,
+        TOPIC_STATE_KPOP,
+        TOPIC_STATE_ESPORTS,
     }
 
     public enum DateState {
@@ -40,6 +46,10 @@ public class SearchOptionState {
 
     private static String nextPageToken;
 
+    private static int nextJotJJangInex = 1;
+
+    private static HashMap<String, String> keyWordMap = null;
+
     public static void setDateTimeForRequest()
     {
         long now = System.currentTimeMillis();
@@ -62,6 +72,10 @@ public class SearchOptionState {
         longTimeAgoDateString = "1970-01-01T00:00:00Z";
     }
 
+    public static void setKeyWordMap(HashMap<String, String> map) {
+        keyWordMap = map;
+    }
+
     public static TopicState getTopicState() {
         return topicState;
     }
@@ -72,14 +86,24 @@ public class SearchOptionState {
 
     public static String getTopicStateString() {
         if (topicState == TopicState.TOPIC_STATE_HOTCLIP) {
-            return "서울";
+            return "";
+        } else if (topicState == TopicState.TOPIC_STATE_SEOUL_NEWS) {
+            return keyWordMap.get("SEOUL_NEWS");
+        } else if (topicState == TopicState.TOPIC_STATE_SEOUL_FESTIVAL) {
+            return keyWordMap.get("SEOUL_FESTIVAL");
+        } else if (topicState == TopicState.TOPIC_STATE_SEOUL_FOOD) {
+            return keyWordMap.get("SEOUL_FOOD");
         } else if (topicState == TopicState.TOPIC_STATE_NEWS) {
-            return "뉴스";
+            return keyWordMap.get("NEWS");
         } else if (topicState == TopicState.TOPIC_STATE_SPORTS) {
-            return "스포츠";
+            return keyWordMap.get("SPORTS");
         } else if (topicState == TopicState.TOPIC_STATE_HUMOR) {
-            return "웃긴영상";
-        } else {
+            return keyWordMap.get("HUMOR");
+        } else if (topicState == TopicState.TOPIC_STATE_KPOP) {
+            return keyWordMap.get("KPOP");
+        }else if (topicState == TopicState.TOPIC_STATE_ESPORTS) {
+            return keyWordMap.get("ESPORTS");
+        }else{
             return "";
         }
     }
@@ -162,5 +186,13 @@ public class SearchOptionState {
 
     public static void setNextPageToken(String nextPageToken) {
         SearchOptionState.nextPageToken = nextPageToken;
+    }
+
+    public static int getNextJotJJangIndex() {
+        return ++nextJotJJangInex;
+    }
+
+    public static void setInitJotJJangIndex() {
+        nextJotJJangInex = 1;
     }
 }

@@ -13,8 +13,10 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 
 public class VideoFragment extends YouTubePlayerFragment implements YouTubePlayer.OnInitializedListener{
-    private YouTubePlayer player;
-    private String videoId;
+    private YouTubePlayer player = null;
+    private String videoId =  null;
+    private boolean isFullScreen = false;
+    private boolean isCue = false;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -39,16 +41,23 @@ public class VideoFragment extends YouTubePlayerFragment implements YouTubePlaye
             @Override
             public void onFullscreen(boolean b) {
                 if(b == true) {
-                    //Log.e("videoplayer","true");
+                    Log.e("videoplayer","true");
+                    isFullScreen = true;
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 } else {
-                    //Log.e("videoplayer","false");
+                    Log.e("videoplayer","false");
+                    isFullScreen = false;
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
             }
         });
         if (!b && videoId != null) {
-            player.loadVideo(videoId);
+            Log.e("initialize sucess", "cue");
+            if(isCue == true) {
+                player.cueVideo(videoId);
+            } else {
+                player.loadVideo(videoId);
+            }
         }
     }
 
@@ -57,11 +66,24 @@ public class VideoFragment extends YouTubePlayerFragment implements YouTubePlaye
         this.player = null;
     }
 
-    public void setVideo(String videoId) {
+    public void loadVideo(String videoId) {
         if (videoId != null && !videoId.equals(this.videoId)) {
             this.videoId = videoId;
+            isCue = false;
             if (player != null) {
+                Log.e("thisis load","load");
                 player.loadVideo(videoId);
+            }
+        }
+    }
+
+    public void cueVideo(String videoId) {
+        if (videoId != null && !videoId.equals(this.videoId)) {
+            this.videoId = videoId;
+            isCue = true;
+            if (player != null) {
+                Log.e("thisis Cue","cue");
+                player.cueVideo(videoId);
             }
         }
     }
@@ -78,6 +100,10 @@ public class VideoFragment extends YouTubePlayerFragment implements YouTubePlaye
         if (player != null) {
             player.pause();
         }
+    }
+
+    public boolean getIsFullScreen() {
+        return this.isFullScreen;
     }
 
     public void setFullscreen(boolean b) {
