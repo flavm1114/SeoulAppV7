@@ -22,19 +22,23 @@ public class VideoListFragment extends ListFragment {
     private PageAdapter adapter;
     private View videoContainer;
     private View mainContainer;
+    private ListView listView;
 
     public void addVideoItem(VideoEntry videoEntry) {
         adapter.addVideoItem(videoEntry);
     }
 
-    public void clearVideoEntries() { adapter.clearVideoEntries(); }
+    public void clearVideoEntries() {
+        adapter.clearVideoEntries();
+    }
 
-    public void addVideoEntries(ArrayList<VideoEntry> list) { adapter.addVideoEntries(list);}
+    public void addVideoEntries(ArrayList<VideoEntry> list) {
+        adapter.addVideoEntries(list);
+    }
 
     public void setLabelVisibility(boolean visible) {
         adapter.setLabelVisibility(visible);
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,12 +49,12 @@ public class VideoListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         videoContainer = getActivity().findViewById(R.id.video_container);
         mainContainer = getActivity().findViewById(R.id.main_container);
-        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView = getListView();
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         setListAdapter(adapter);
-        getListView().setItemChecked(0,true);
+        listView.setItemChecked(0, true);
     }
 
     @Override
@@ -83,7 +87,13 @@ public class VideoListFragment extends ListFragment {
     }
 
     public void scrollToTop() {
-        getListView().requestFocusFromTouch();
-        getListView().setSelection(0);
+        listView.requestFocusFromTouch();
+        listView.setSelection(0);
+    }
+
+    public void setUnFocusCheckdItem() {
+        if (listView.getCheckedItemCount() > 0) {
+            listView.setItemChecked(listView.getCheckedItemPosition(), false);
+        }
     }
 }

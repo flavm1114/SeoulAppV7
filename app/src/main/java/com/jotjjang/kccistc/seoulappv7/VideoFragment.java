@@ -12,7 +12,8 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 
-public class VideoFragment extends YouTubePlayerFragment implements YouTubePlayer.OnInitializedListener{
+public class VideoFragment extends YouTubePlayerFragment
+        implements YouTubePlayer.OnInitializedListener{
     private YouTubePlayer player = null;
     private String videoId =  null;
     private boolean isFullScreen = false;

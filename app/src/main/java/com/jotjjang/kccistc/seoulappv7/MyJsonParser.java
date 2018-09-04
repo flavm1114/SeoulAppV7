@@ -287,6 +287,73 @@ public class MyJsonParser {
         return new VideoEntry(title,videoId,publishedDate,description,channelTitle,imgUrl,viewCount);
     }
 
+    public static JSONObject getYoutubeItems(ArrayList<String> idList) {
+        String url = "https://www.googleapis.com/youtube/v3/videos"
+                + "?part=snippet,statistics"
+                + "&key=" + DeveloperKey.DEVELOPER_KEY
+                + "&id=";
+        for(int i = 0; i < idList.size();i++) {
+            url = url + idList.get(i);
+            if(i != idList.size()-1) {
+                url = url +",";
+            }
+        }
+        HttpGet httpGet = new HttpGet(url);
+
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
+            {
+                stringBuilder.append(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static ArrayList<VideoEntry> parseYoutubeItems(JSONObject jsonObject) throws JSONException {
+
+        ArrayList<VideoEntry> videoEntryArrayList = new ArrayList<>();
+        JSONArray contacts = jsonObject.getJSONArray("items");
+        for (int i = 0; i < contacts.length(); i++) {
+            JSONObject c = contacts.getJSONObject(i);
+            JSONObject snippet = c.getJSONObject("snippet");
+            JSONObject statistics = c.getJSONObject("statistics");
+            String title = null;
+            String description = null;
+            String channelTitle = null;
+            title = snippet.getString("title");
+            description = snippet.getString("description");
+            channelTitle = snippet.getString("channelTitle");
+            String videoId = c.getString("id");
+            String publishedDate = snippet.getString("publishedAt").substring(0,10);
+            String imgUrl = snippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
+            int viewCount = Integer.parseInt(statistics.getString("viewCount"));
+            videoEntryArrayList.add(new VideoEntry(title,videoId,publishedDate,description,channelTitle,imgUrl,viewCount));
+        }
+
+        return videoEntryArrayList;
+    }
+
     public static JSONObject getJotJJangNext(int index) {
         HttpGet httpGet = new HttpGet("http://jotjjang.com/seoulApp/welcome"+index+".htm");
 
@@ -318,5 +385,61 @@ public class MyJsonParser {
         }
 
         return jsonObject;
+    }
+
+    public static JSONObject getYoutubeViewCount(ArrayList<String> idList) {
+        String url = "https://www.googleapis.com/youtube/v3/videos"
+                + "?part=statistics"
+                + "&key=" + DeveloperKey.DEVELOPER_KEY
+                + "&id=";
+        for(int i = 0; i < idList.size();i++) {
+            url = url + idList.get(i);
+            if(i != idList.size()-1) {
+                url = url +",";
+            }
+        }
+        HttpGet httpGet = new HttpGet(url);
+
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
+            {
+                stringBuilder.append(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static HashMap<String,Integer> parseYoutubeViewCount(JSONObject jsonObject) throws JSONException {
+        HashMap<String,Integer> viewCountHashMap = new HashMap<>();
+        JSONArray contacts = jsonObject.getJSONArray("items");
+        for (int i = 0; i < contacts.length(); i++) {
+            JSONObject c = contacts.getJSONObject(i);
+            JSONObject statistics = c.getJSONObject("statistics");
+            String videoId = c.getString("id");
+            int viewCount = Integer.parseInt(statistics.getString("viewCount"));
+            viewCountHashMap.put(videoId,viewCount);
+        }
+        return viewCountHashMap;
     }
 }

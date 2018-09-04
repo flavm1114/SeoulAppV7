@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.WindowManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +20,8 @@ public class IntroActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.intro_activity);
         new IntroTask().execute();
     }
@@ -26,7 +29,7 @@ public class IntroActivity extends Activity {
     class IntroTask extends AsyncTask<Void, Void, Void> {
         HashMap<String, String> map = new HashMap<>();
         ArrayList<String> idList = new ArrayList<>();
-        ArrayList<VideoEntry> entryList = new ArrayList<>();
+        ArrayList<VideoEntry> entryList = null;
 
         @Override
         protected void onPreExecute() {
@@ -49,16 +52,13 @@ public class IntroActivity extends Activity {
                 e.printStackTrace();
             }
 
-            for(int i = 0; i < idList.size(); i++) {
-                JSONObject jsonObject = MyJsonParser.getOneYoutube(idList.get(i));
-                VideoEntry entry = null;
-                try {
-                    entry = MyJsonParser.parseOneYoutube(jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                entryList.add(entry);
+            JSONObject jsonObject = MyJsonParser.getYoutubeItems(idList);
+            try {
+                entryList = MyJsonParser.parseYoutubeItems(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
             return null;
         }
 

@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -57,16 +58,10 @@ public class MainActivity extends AppCompatActivity
     /** The request code when calling startActivityForResult to recover from an API service error. */
     public static final int RECOVERY_DIALOG_REQUEST = 1;
 
-//    public static String TOPIC_FESTIVAL="";
-//    public static String TOPIC_NEWS="";
-//    public static String TOPIC_SPORTS="";
-//    public static String TOPIC_HUMOR="";
-//    public static String TOPIC_ESPORTS="";
-//    public static String TOPIC_FOOD="";
-
     //layout contents FOR activity, youtube
     private VideoListFragment videoListFragment;
     private VideoFragment videoFragment;
+    private CommentFragment commentFragment;
     private View mainContainer;
     private View videoContainer;
     private View listContainer;
@@ -83,6 +78,9 @@ public class MainActivity extends AppCompatActivity
     ArrayList<VideoEntry> hotclip;
     HashMap<String,String> mapKeyword;
 
+    //comment fragment part
+    private boolean isCommentOpen;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +91,8 @@ public class MainActivity extends AppCompatActivity
         //layout contents FOR activity, youtube
         videoFragment = (VideoFragment)getFragmentManager().findFragmentById(R.id.video_fragment);
         videoListFragment = (VideoListFragment)getFragmentManager().findFragmentById(R.id.list_fragment);
+        commentFragment = (CommentFragment)getFragmentManager().findFragmentById(R.id.comment_fragment);
+        getFragmentManager().beginTransaction().hide(commentFragment).commit();
         mainContainer = findViewById(R.id.main_container);
         videoContainer = findViewById(R.id.video_container);
         listContainer = findViewById(R.id.list_container);
@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity
 
         //data request contents
         isLoading = false;
+        isCommentOpen = false;
+
+        SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP);
 
         Intent intent = getIntent();
         SearchOptionState.setKeyWordMap((HashMap<String, String>) intent.getSerializableExtra("keyword"));
@@ -138,8 +141,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        SearchOptionState.setDateTimeForRequest();
         super.onResume();
+        SearchOptionState.setDateTimeForRequest();
     }
 
     @Override
@@ -204,6 +207,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     case R.id.setting_today:
                         SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_TODAY);
+                        break;
                     case R.id.setting_week:
                         SearchOptionState.setDateState(SearchOptionState.DateState.DATE_STATE_WEEK);
                         break;
@@ -245,8 +249,6 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -261,6 +263,7 @@ public class MainActivity extends AppCompatActivity
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 SearchOptionState.setInitJotJJangIndex();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP);
+                videoListFragment.setUnFocusCheckdItem();
                 videoListFragment.clearVideoEntries();
                 videoListFragment.addVideoEntries(hotclip);
                 loadingProgressBar.setVisibility(View.GONE);
@@ -380,6 +383,26 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    public void onClickComment(View view) {
+        if(isCommentOpen == false)
+        {
+            getFragmentManager().beginTransaction().setCustomAnimations(
+                    R.animator.slide_left,R.animator.slide_right
+                    ,R.animator.slide_left, R.animator.slide_right)
+                    .show(getFragmentManager().findFragmentById(R.id.comment_fragment)).commit();
+            isCommentOpen = true;
+            commentFragment.addCommentItem(new CommentEntry(null,null,null,null,null,0,null,true,0,true));
+        } else
+        {
+            getFragmentManager().beginTransaction().setCustomAnimations(
+                    R.animator.slide_left,R.animator.slide_right
+                    ,R.animator.slide_left, R.animator.slide_right)
+                    .hide(getFragmentManager().findFragmentById(R.id.comment_fragment)).commit();
+            isCommentOpen = false;
+        }
+    }
+
+
     @TargetApi(16)
     private void runOnAnimationEnd(ViewPropertyAnimator animator, final Runnable runnable) {
         if (Build.VERSION.SDK_INT >= 16) {
@@ -450,11 +473,29 @@ public class MainActivity extends AppCompatActivity
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            ArrayList<String> idList = new ArrayList<>();
+            for(int i = 0; i < resultList.size(); i++) {
+                idList.add(resultList.get(i).getVideoId());
+            }
+
+            HashMap<String,Integer> viewCountHashMap = null;
+            try {
+                viewCountHashMap = MyJsonParser.parseYoutubeViewCount(MyJsonParser.getYoutubeViewCount(idList));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            for(int i = 0; i < resultList.size(); i++) {
+                VideoEntry videoEntry = resultList.get(i);
+                videoEntry.setViewCount(viewCountHashMap.get(videoEntry.getVideoId()));
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
+            videoListFragment.setUnFocusCheckdItem();
             videoListFragment.clearVideoEntries();
             videoListFragment.addVideoEntries(resultList);
             loadingProgressBar.setVisibility(View.GONE);
@@ -484,6 +525,23 @@ public class MainActivity extends AppCompatActivity
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            ArrayList<String> idList = new ArrayList<>();
+            for(int i = 0; i < resultList.size(); i++) {
+                idList.add(resultList.get(i).getVideoId());
+            }
+
+            HashMap<String,Integer> viewCountHashMap = null;
+            try {
+                viewCountHashMap = MyJsonParser.parseYoutubeViewCount(MyJsonParser.getYoutubeViewCount(idList));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            for(int i = 0; i < resultList.size(); i++) {
+                VideoEntry videoEntry = resultList.get(i);
+                videoEntry.setViewCount(viewCountHashMap.get(videoEntry.getVideoId()));
+            }
             return null;
         }
 
@@ -497,7 +555,7 @@ public class MainActivity extends AppCompatActivity
 
     private class HotClipNextTask extends AsyncTask<Void, Void, Void> {
         ArrayList<String> idList = new ArrayList<>();
-        ArrayList<VideoEntry> resultList = new ArrayList<>();
+        ArrayList<VideoEntry> resultList = null;
 
         @Override
         protected void onPreExecute() {
@@ -513,12 +571,11 @@ public class MainActivity extends AppCompatActivity
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            for(int i = 0; i < idList.size(); i++) {
-                try {
-                    resultList.add(MyJsonParser.parseOneYoutube(MyJsonParser.getOneYoutube(idList.get(i))));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
+            try {
+                resultList = MyJsonParser.parseYoutubeItems(MyJsonParser.getYoutubeItems(idList));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }

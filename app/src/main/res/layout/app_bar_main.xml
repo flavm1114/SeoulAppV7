@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            app:titleTextAppearance="@style/TitleBarTextAppearance"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -37,14 +38,26 @@
                 android:id="@+id/video_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-            <ImageButton
-                android:id="@+id/close_button"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_below="@+id/video_fragment"
-                android:src="@android:drawable/btn_dialog"
-                android:onClick="onClickClose"/>
+                android:orientation="horizontal"
+                android:layout_below="@id/video_fragment">
+                <ImageButton
+                    android:id="@+id/comment_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/btn_dialog"
+                    android:onClick="onClickComment"
+                    android:layout_weight="1"/>
+                <ImageButton
+                    android:id="@+id/close_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@android:drawable/btn_dialog"
+                    android:onClick="onClickClose"/>
+            </LinearLayout>
         </RelativeLayout>
         <FrameLayout
             android:id="@+id/list_container"
@@ -53,6 +66,11 @@
             <fragment
                 class="com.jotjjang.kccistc.seoulappv7.VideoListFragment"
                 android:id="@+id/list_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <fragment
+                class="com.jotjjang.kccistc.seoulappv7.CommentFragment"
+                android:id="@+id/comment_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
             <ProgressBar

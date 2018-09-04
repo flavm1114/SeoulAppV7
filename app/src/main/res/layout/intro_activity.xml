@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:id="@+id/intro_layout"
-    android:gravity="center">
+    android:background="@android:color/white">
 
-  <TextView
-      android:text="this is intro activity"
+  <ImageView
+      android:src="@drawable/logo_v4"
+      android:layout_gravity="top|center_horizontal"
+      android:translationY="-60dp"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+  <ProgressBar
+      android:layout_marginBottom="100dp"
+      android:layout_gravity="bottom|center_horizontal"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content" />
 
-</LinearLayout>
+</FrameLayout>

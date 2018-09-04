@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -108,15 +109,17 @@ public class PageAdapter extends BaseAdapter{
             }
         }
 
-        LinearLayout label = view.findViewById(R.id.item_label);
+        RelativeLayout label = view.findViewById(R.id.item_label);
         TextView textTitle = view.findViewById(R.id.item_title);
         textTitle.setText(entry.getTitle());
-        TextView textDescription = view.findViewById(R.id.item_description);
-        textDescription.setText(entry.getDescription());
+//        TextView textDescription = view.findViewById(R.id.item_description);
+//        textDescription.setText(entry.getDescription());
         TextView textChannelTitle = view.findViewById(R.id.item_channelTitle);
         textChannelTitle.setText(entry.getChannelTitle());
         TextView textPublishedDate = view.findViewById(R.id.item_publishedDate);
         textPublishedDate.setText(entry.getPublishedDate());
+        TextView textViewCount = view.findViewById(R.id.item_viewCount);
+        textViewCount.setText("조회수:"+entry.getViewCount());
 
         label.setVisibility(labelsVisible ? View.VISIBLE : View.GONE);
         return view;
