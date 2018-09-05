@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -45,7 +47,19 @@ public class CommentAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.comment_item, parent, false);
         }
 
-        TextView textView = view.findViewById(R.id.comment_item_title);
+        RelativeLayout label = view.findViewById(R.id.comment_label);
+        ImageView imageViewProfile = view.findViewById(R.id.comment_authorProfileImageUrl);
+        TextView textViewAuthorName = view.findViewById(R.id.comment_authorName);
+        TextView textViewPublishedAt = view.findViewById(R.id.comment_publishedAt);
+        TextView textViewContentText = view.findViewById(R.id.comment_content_text);
+        TextView textViewReplyCount = view.findViewById(R.id.comment_reply_count);
+
+        imageViewProfile.setImageResource(R.drawable.ic_menu_gallery);
+        textViewAuthorName.setText(entry.getAuthorName());
+        textViewPublishedAt.setText(entry.getPublishedAt());
+        textViewContentText.setText(entry.getCommentText());
+        textViewReplyCount.setText(entry.getTotalReplyCount()+"");
+
         return view;
     }
 

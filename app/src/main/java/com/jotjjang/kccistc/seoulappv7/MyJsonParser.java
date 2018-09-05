@@ -1,5 +1,7 @@
 package com.jotjjang.kccistc.seoulappv7;
 
+import android.util.Log;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -441,5 +443,118 @@ public class MyJsonParser {
             viewCountHashMap.put(videoId,viewCount);
         }
         return viewCountHashMap;
+    }
+
+    public static JSONObject getYoutubeComments(String videoId, int maxResults) {
+        String url = "https://www.googleapis.com/youtube/v3/commentThreads"
+                + "?part=id,replies,snippet"
+                + "&key=" + DeveloperKey.DEVELOPER_KEY
+                + "&videoId=" + videoId
+                + "&textFormat=plainText"
+                + "&maxResults=" + maxResults;
+
+        HttpGet httpGet = new HttpGet(url);
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
+            {
+                stringBuilder.append(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static ArrayList<CommentEntry> parseYoutubeComments(JSONObject jsonObject) throws JSONException {
+        ArrayList<CommentEntry> commentEntryArrayList = new ArrayList<>();
+        JSONArray contacts = jsonObject.getJSONArray("items");
+        for (int i = 0; i < contacts.length(); i++) {
+            JSONObject c = contacts.getJSONObject(i);
+            String kind = c.getString("kind");
+            if(kind.equals("youtube#commentThread")) {
+                String commentId = c.getString("id");
+                JSONObject snippet = c.getJSONObject("snippet");
+                String videoId = snippet.getString("videoId");
+                JSONObject topLevelComment = snippet.getJSONObject("topLevelComment");
+                JSONObject snippet2 = topLevelComment.getJSONObject("snippet");
+                String authorName = snippet2.getString("authorDisplayName");
+                String authorProfileImageUrl = snippet2.getString("authorProfileImageUrl");
+                String commentText = snippet2.getString("textDisplay");
+                int likeCount = snippet2.getInt("likeCount");
+                String publishedAt = snippet2.getString("publishedAt").substring(0,10);
+                boolean canReply =  snippet.getBoolean("canReply");
+                int totalReplyCount = snippet.getInt("totalReplyCount");
+                boolean isPublic = snippet.getBoolean("isPublic");
+
+//                Log.e("gdgd","gggggggggggggggggggggggggggggggggg");
+//                Log.e("commentId",commentId);
+//                Log.e("authorName",authorName);
+//                Log.e("authorProfileImageUrl",authorProfileImageUrl);
+//                Log.e("commentText", commentText);
+//                Log.e("videoId", videoId);
+//                Log.e("likeCount", likeCount+"");
+//                Log.e("publishedAt", publishedAt);
+//                Log.e("canReply",canReply?"true":"false");
+//                Log.e("totalReplyCount", totalReplyCount+"");
+//                Log.e("isPublic", isPublic?"true":"false");
+
+                CommentEntry commentEntry = new CommentEntry(
+                        commentId, authorName, authorProfileImageUrl
+                        , commentText, videoId, likeCount, publishedAt
+                        , canReply, totalReplyCount, isPublic);
+                if(totalReplyCount > 0)
+                {
+                    JSONObject replies = c.getJSONObject("replies");
+                    JSONArray comments = replies.getJSONArray("comments");
+                    for (int j = 0; j < comments.length(); j++) {
+                        JSONObject replyItem = comments.getJSONObject(j);
+                        String reply_commentId = replyItem.getString("id");
+                        JSONObject reply_snippet = replyItem.getJSONObject("snippet");
+                        String reply_authorName = reply_snippet.getString("authorDisplayName");
+                        String reply_authorProfileImageUrl = reply_snippet.getString("authorProfileImageUrl");
+                        String reply_videoId = reply_snippet.getString("videoId");
+                        String reply_commentText = reply_snippet.getString("textDisplay");
+                        int reply_likeCount = reply_snippet.getInt("likeCount");
+                        String reply_publishedAt = reply_snippet.getString("publishedAt").substring(0,10);
+
+                        CommentEntry replyEntry = new CommentEntry(reply_commentId, reply_authorName
+                                , reply_authorProfileImageUrl, reply_commentText, reply_videoId
+                                , reply_likeCount, reply_publishedAt, false, 0, true);
+
+//                        Log.e("XXXXX","XXXXXXXXXXXXXXXXXXXXXXXX");
+//                        Log.e("reply_commentId",reply_commentId);
+//                        Log.e("reply_authorName",reply_authorName);
+//                        Log.e("reply_authorProfil",reply_authorProfileImageUrl);
+//                        Log.e("reply_commentText", reply_commentText);
+//                        Log.e("reply_videoId", reply_videoId);
+//                        Log.e("reply_likeCount", reply_likeCount+"");
+//                        Log.e("reply_publishedAt", reply_publishedAt);
+
+                        commentEntry.getRepliesList().add(replyEntry);
+                    }
+                }
+                commentEntryArrayList.add(commentEntry);
+            }
+        }
+        return commentEntryArrayList;
     }
 }

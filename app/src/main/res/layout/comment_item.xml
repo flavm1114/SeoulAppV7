@@ -1,16 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:padding="20dp"
     android:gravity="center"
-    android:background="?android:attr/activatedBackgroundIndicator">
+    android:id="@+id/comment_label">
+
+    <ImageView
+        android:id="@+id/comment_authorProfileImageUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
 
     <TextView
-        android:id="@+id/comment_item_title"
-        android:text="gdgd im comment item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:id="@+id/comment_authorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/comment_authorProfileImageUrl"
+        android:layout_toRightOf="@id/comment_authorProfileImageUrl"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/comment_publishedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/comment_authorName"
+        android:layout_toRightOf="@id/comment_authorName"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    <TextView
+        android:id="@+id/comment_content_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/comment_authorName"
+        android:layout_below="@id/comment_authorName"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    <TextView
+        android:id="@+id/comment_reply_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/comment_content_text"
+        android:layout_alignParentLeft="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+</RelativeLayout>

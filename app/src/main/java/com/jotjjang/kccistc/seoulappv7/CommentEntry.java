@@ -116,8 +116,4 @@ public class CommentEntry {
     public ArrayList<CommentEntry> getRepliesList() {
         return repliesList;
     }
-
-    public void setRepliesList(ArrayList<CommentEntry> repliesList) {
-        this.repliesList = repliesList;
-    }
 }

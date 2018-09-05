@@ -1,21 +1,15 @@
 package com.jotjjang.kccistc.seoulappv7;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.ClipData;
+import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,26 +21,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.Key;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
@@ -66,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     private View videoContainer;
     private View listContainer;
     private View closeButton;
+    private ToggleButton commentButton;
 
     //progressbar, loading, scroll contents
     private ProgressBar loadingProgressBar;
@@ -80,6 +67,7 @@ public class MainActivity extends AppCompatActivity
 
     //comment fragment part
     private boolean isCommentOpen;
+    private boolean isTransacting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +75,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //layout contents FOR activity, youtube
         videoFragment = (VideoFragment)getFragmentManager().findFragmentById(R.id.video_fragment);
@@ -97,6 +87,7 @@ public class MainActivity extends AppCompatActivity
         videoContainer = findViewById(R.id.video_container);
         listContainer = findViewById(R.id.list_container);
         closeButton = findViewById(R.id.close_button);
+        commentButton = findViewById(R.id.comment_button);
         //videoContainer.setVisibility(View.GONE);
 
         //progressbar, loading, scroll contents
@@ -108,6 +99,7 @@ public class MainActivity extends AppCompatActivity
         //data request contents
         isLoading = false;
         isCommentOpen = false;
+        isTransacting = false;
 
         SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP);
 
@@ -384,21 +376,43 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onClickComment(View view) {
-        if(isCommentOpen == false)
-        {
-            getFragmentManager().beginTransaction().setCustomAnimations(
-                    R.animator.slide_left,R.animator.slide_right
-                    ,R.animator.slide_left, R.animator.slide_right)
-                    .show(getFragmentManager().findFragmentById(R.id.comment_fragment)).commit();
-            isCommentOpen = true;
-            commentFragment.addCommentItem(new CommentEntry(null,null,null,null,null,0,null,true,0,true));
-        } else
-        {
-            getFragmentManager().beginTransaction().setCustomAnimations(
-                    R.animator.slide_left,R.animator.slide_right
-                    ,R.animator.slide_left, R.animator.slide_right)
-                    .hide(getFragmentManager().findFragmentById(R.id.comment_fragment)).commit();
-            isCommentOpen = false;
+        if(isTransacting == false) {
+            isTransacting = true;
+            commentButton.setEnabled(false);
+            FragmentManager fragmentManager = getFragmentManager();
+            if (isCommentOpen == false) {
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_left_comment, R.animator.slide_right_comment
+                        , R.animator.slide_left_comment, R.animator.slide_right_comment)
+                        .show(fragmentManager.findFragmentById(R.id.comment_fragment)).commit();
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_right_list, R.animator.slide_left_list
+                        , R.animator.slide_right_list, R.animator.slide_left_list)
+                        .hide(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
+                isCommentOpen = true;
+
+                asyncTask = new CommentTask().execute();
+            } else {
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_left_comment, R.animator.slide_right_comment
+                        , R.animator.slide_left_comment, R.animator.slide_right_comment)
+                        .hide(fragmentManager.findFragmentById(R.id.comment_fragment)).commit();
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_right_list, R.animator.slide_left_list
+                        , R.animator.slide_right_list, R.animator.slide_left_list)
+                        .show(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
+                isCommentOpen = false;
+            }
+
+            new Handler().postDelayed(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    isTransacting = false;
+                    commentButton.setEnabled(true);
+                }
+            }, 450);
         }
     }
 
@@ -585,6 +599,33 @@ public class MainActivity extends AppCompatActivity
             videoListFragment.addVideoEntries(resultList);
             loadingProgressBar.setVisibility(View.GONE);
             isLoading = false;
+        }
+    }
+
+    private class CommentTask extends AsyncTask<Void, Void, Void> {
+        ArrayList<CommentEntry> resultList;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                resultList = MyJsonParser.parseYoutubeComments(MyJsonParser.getYoutubeComments(videoFragment.getVideoId(),5));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            commentFragment.clearCommentEntries();
+            commentFragment.addCommentItemList(resultList);
         }
     }
 }
