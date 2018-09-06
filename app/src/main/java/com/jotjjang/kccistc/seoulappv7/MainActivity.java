@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
+import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -335,6 +336,35 @@ public class MainActivity extends AppCompatActivity
                 item.setChecked(false);
             }
         }
+
+        if(isTransacting == false) {
+            isTransacting = true;
+            commentButton.setEnabled(false);
+            if (isCommentOpen == true) {
+                FragmentManager fragmentManager = getFragmentManager();
+                isCommentOpen = false;
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_left_comment, R.animator.slide_right_comment
+                        , R.animator.slide_left_comment, R.animator.slide_right_comment)
+                        .hide(fragmentManager.findFragmentById(R.id.comment_fragment)).commit();
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_right_list, R.animator.slide_left_list
+                        , R.animator.slide_right_list, R.animator.slide_left_list)
+                        .show(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        commentFragment.removeFooter();
+                        commentFragment.clearCommentEntries();
+                        commentButton.setEnabled(true);
+                        isTransacting = false;
+                    }
+                }, 450);
+            } else {
+                commentButton.setEnabled(true);
+                isTransacting = false;
+            }
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -362,17 +392,24 @@ public class MainActivity extends AppCompatActivity
 
     // 비디오 플레이어 닫기 버튼 누를시 호출 됩니다
     public void onClickClose(@SuppressWarnings("unused") View view) {
-        videoListFragment.getListView().clearChoices();
-        videoFragment.pauseVideo();
-        ViewPropertyAnimator animator = videoContainer.animate()
-                .translationXBy(videoContainer.getWidth())
-                .setDuration(ANIMATION_DURATION_MILLIS);
-        runOnAnimationEnd(animator, new Runnable() {
-            @Override
-            public void run() {
-                videoContainer.setVisibility(View.GONE);
-            }
-        });
+        if(isCommentOpen == false) {
+            videoListFragment.getListView().clearChoices();
+            videoFragment.pauseVideo();
+            ViewPropertyAnimator animator = videoContainer.animate()
+                    .translationXBy(videoContainer.getWidth())
+                    .setDuration(ANIMATION_DURATION_MILLIS);
+            runOnAnimationEnd(animator, new Runnable() {
+                @Override
+                public void run() {
+                    videoContainer.setVisibility(View.GONE);
+
+                    //여기 하자!
+                }
+            });
+        } else
+        {
+
+        }
     }
 
     public void onClickComment(View view) {
@@ -381,18 +418,30 @@ public class MainActivity extends AppCompatActivity
             commentButton.setEnabled(false);
             FragmentManager fragmentManager = getFragmentManager();
             if (isCommentOpen == false) {
-                fragmentManager.beginTransaction().setCustomAnimations(
-                        R.animator.slide_left_comment, R.animator.slide_right_comment
-                        , R.animator.slide_left_comment, R.animator.slide_right_comment)
-                        .show(fragmentManager.findFragmentById(R.id.comment_fragment)).commit();
-                fragmentManager.beginTransaction().setCustomAnimations(
-                        R.animator.slide_right_list, R.animator.slide_left_list
-                        , R.animator.slide_right_list, R.animator.slide_left_list)
-                        .hide(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
-                isCommentOpen = true;
-
-                asyncTask = new CommentTask().execute();
+                if(videoFragment.getVideoId() != null) {
+                    isCommentOpen = true;
+                    loadingProgressBar.setVisibility(View.VISIBLE);
+                    fragmentManager.beginTransaction().setCustomAnimations(
+                            R.animator.slide_left_comment, R.animator.slide_right_comment
+                            , R.animator.slide_left_comment, R.animator.slide_right_comment)
+                            .show(fragmentManager.findFragmentById(R.id.comment_fragment)).commit();
+                    fragmentManager.beginTransaction().setCustomAnimations(
+                            R.animator.slide_right_list, R.animator.slide_left_list
+                            , R.animator.slide_right_list, R.animator.slide_left_list)
+                            .hide(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
+                    asyncTask = new CommentTask().execute();
+                    new Handler().postDelayed(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            commentButton.setEnabled(true);
+                            isTransacting = false;
+                        }
+                    }, 450);
+                }
             } else {
+                isCommentOpen = false;
                 fragmentManager.beginTransaction().setCustomAnimations(
                         R.animator.slide_left_comment, R.animator.slide_right_comment
                         , R.animator.slide_left_comment, R.animator.slide_right_comment)
@@ -401,21 +450,20 @@ public class MainActivity extends AppCompatActivity
                         R.animator.slide_right_list, R.animator.slide_left_list
                         , R.animator.slide_right_list, R.animator.slide_left_list)
                         .show(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
-                isCommentOpen = false;
-            }
-
-            new Handler().postDelayed(new Runnable()
-            {
-                @Override
-                public void run()
+                new Handler().postDelayed(new Runnable()
                 {
-                    isTransacting = false;
-                    commentButton.setEnabled(true);
-                }
-            }, 450);
+                    @Override
+                    public void run()
+                    {
+                        commentFragment.removeFooter();
+                        commentFragment.clearCommentEntries();
+                        commentButton.setEnabled(true);
+                        isTransacting = false;
+                    }
+                }, 450);
+            }
         }
     }
-
 
     @TargetApi(16)
     private void runOnAnimationEnd(ViewPropertyAnimator animator, final Runnable runnable) {
@@ -445,7 +493,6 @@ public class MainActivity extends AppCompatActivity
 
     private static void setLayoutSizeAndGravity(View view, int width, int height, int gravity) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
-
         params.width = width;
         params.height = height;
         //params.gravity = gravity;
@@ -509,6 +556,13 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void result) {
+            if(videoListFragment.getListView().getFooterViewsCount() == 0 && resultList.size() == 0)
+            {
+                videoListFragment.addFooterNoMore();
+            } else if(videoListFragment.getListView().getFooterViewsCount() > 0 && resultList.size() > 0)
+            {
+                videoListFragment.removeFooter();
+            }
             videoListFragment.setUnFocusCheckdItem();
             videoListFragment.clearVideoEntries();
             videoListFragment.addVideoEntries(resultList);
@@ -561,6 +615,13 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void result) {
+            if(videoListFragment.getListView().getFooterViewsCount() == 0 && resultList.size() == 0)
+            {
+                videoListFragment.addFooterNoMore();
+            } else if(videoListFragment.getListView().getFooterViewsCount() > 0 && resultList.size() > 0)
+            {
+                videoListFragment.removeFooter();
+            }
             videoListFragment.addVideoEntries(resultList);
             loadingProgressBar.setVisibility(View.GONE);
             isLoading = false;
@@ -596,6 +657,13 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void result) {
+            if(videoListFragment.getListView().getFooterViewsCount() == 0 && resultList.size() == 0)
+            {
+                videoListFragment.addFooterNoMore();
+            } else if(videoListFragment.getListView().getFooterViewsCount() > 0 && resultList.size() > 0)
+            {
+                videoListFragment.removeFooter();
+            }
             videoListFragment.addVideoEntries(resultList);
             loadingProgressBar.setVisibility(View.GONE);
             isLoading = false;
@@ -603,18 +671,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     private class CommentTask extends AsyncTask<Void, Void, Void> {
-        ArrayList<CommentEntry> resultList;
+        ArrayList<CommentEntry> resultList = new ArrayList<>();
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                resultList = MyJsonParser.parseYoutubeComments(MyJsonParser.getYoutubeComments(videoFragment.getVideoId(),5));
+                resultList = MyJsonParser.parseYoutubeComments(
+                        MyJsonParser.getYoutubeComments(videoFragment.getVideoId(),10));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -624,7 +692,15 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void result) {
-            commentFragment.clearCommentEntries();
+            if(commentFragment.getListView().getFooterViewsCount() == 0 && resultList.size() == 0)
+            {
+                commentFragment.addFooterNoMore();
+            } else if(commentFragment.getListView().getFooterViewsCount() > 0 && resultList.size() > 0)
+            {
+                commentFragment.removeFooter();
+            }
+
+            loadingProgressBar.setVisibility(View.GONE);
             commentFragment.addCommentItemList(resultList);
         }
     }

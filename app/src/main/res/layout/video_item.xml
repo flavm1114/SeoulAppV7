@@ -23,7 +23,7 @@
           android:id="@+id/item_title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:textAppearance="?android:attr/textAppearanceSmall"
+          android:fontFamily="@font/seoul_namsan_m"
           android:layout_alignParentTop="true"
           android:layout_alignParentLeft="true"
           android:maxLines="3"
@@ -38,30 +38,29 @@
       <TextView
           android:id="@+id/item_channelTitle"
           android:layout_above="@+id/item_viewCount"
+          android:fontFamily="@font/seoul_namsan_l"
           android:layout_alignLeft="@+id/item_viewCount"
           android:maxLines="1"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:textAppearance="?android:attr/textAppearanceSmall"
           android:textColor="#000"/>
       <TextView
           android:id="@+id/item_viewCount"
+          android:fontFamily="@font/seoul_namsan_l"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentBottom="true"
           android:layout_alignParentLeft="true"
-          android:textAppearance="?android:attr/textAppearanceSmall"
           android:textColor="#000"/>
       <TextView
           android:id="@+id/item_publishedDate"
+          android:fontFamily="@font/seoul_namsan_l"
           android:layout_marginRight="5dp"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_alignParentBottom="true"
           android:layout_alignParentRight="true"
-          android:textAppearance="?android:attr/textAppearanceSmall"
           android:textColor="#000"/>
-
   </RelativeLayout>
 
 </LinearLayout>

@@ -4,52 +4,46 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_hot_clip"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:checked="true"
-            android:title="잘생겼다 서울" />
-        <item
-            android:id="@+id/nav_seoul_news"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="서울 소식" />
-        <item
-            android:id="@+id/nav_seoul_festival"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="서울의 축제" />
-        <item
-            android:id="@+id/nav_seoul_food"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="맛있는 서울" />
-        <item
-            android:id="@+id/nav_news"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="뉴스" />
-        <item
-            android:id="@+id/nav_sports"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="스포츠" />
-        <item
-            android:id="@+id/nav_humor"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="웃긴영상" />
-        <item
-            android:id="@+id/nav_kpop"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="K-POP"/>
+        <item android:title="about 서울">
+            <menu>
+                <item
+                    android:id="@+id/nav_hot_clip"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:checked="true"
+                    android:title="잘생겼다 서울" />
+                <item
+                    android:id="@+id/nav_seoul_news"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="서울 소식" />
+                <item
+                    android:id="@+id/nav_seoul_festival"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="서울의 축제" />
+                <item
+                    android:id="@+id/nav_seoul_food"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="맛있는 서울" />
+                </menu>
+        </item>
+        <item android:title="clip Videos">
+            <menu>
+                <item
+                    android:id="@+id/nav_news"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="뉴스" />
+                <item
+                    android:id="@+id/nav_sports"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="스포츠" />
+                <item
+                    android:id="@+id/nav_humor"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="웃긴영상" />
+                <item
+                    android:id="@+id/nav_kpop"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="K-POP"/>
+            </menu>
+        </item>
     </group>
-
-    <!--<item android:title="Communicate">-->
-        <!--<menu>-->
-            <!--<item-->
-                <!--android:id="@+id/nav_share"-->
-                <!--android:icon="@drawable/ic_menu_share"-->
-                <!--android:title="Share" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-        <!--</menu>-->
-    <!--</item>-->
-
 </menu>

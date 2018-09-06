@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class VideoListFragment extends ListFragment {
     private View videoContainer;
     private View mainContainer;
     private ListView listView;
+    private ImageView noMoreImageView;
 
     public void addVideoItem(VideoEntry videoEntry) {
         adapter.addVideoItem(videoEntry);
@@ -55,6 +57,9 @@ public class VideoListFragment extends ListFragment {
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         setListAdapter(adapter);
         listView.setItemChecked(0, true);
+        listView.setSelector(R.drawable.empty_selector);
+        noMoreImageView = new ImageView(getActivity());
+        noMoreImageView.setImageResource(R.drawable.no_more_clip_s);
     }
 
     @Override
@@ -95,5 +100,13 @@ public class VideoListFragment extends ListFragment {
         if (listView.getCheckedItemCount() > 0) {
             listView.setItemChecked(listView.getCheckedItemPosition(), false);
         }
+    }
+
+    public void addFooterNoMore() {
+        listView.addFooterView(noMoreImageView);
+    }
+
+    public void removeFooter() {
+        listView.removeFooterView(noMoreImageView);
     }
 }

@@ -42,18 +42,15 @@ public class VideoFragment extends YouTubePlayerFragment
             @Override
             public void onFullscreen(boolean b) {
                 if(b == true) {
-                    Log.e("videoplayer","true");
                     isFullScreen = true;
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 } else {
-                    Log.e("videoplayer","false");
                     isFullScreen = false;
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
             }
         });
         if (!b && videoId != null) {
-            Log.e("initialize sucess", "cue");
             if(isCue == true) {
                 player.cueVideo(videoId);
             } else {
@@ -72,7 +69,6 @@ public class VideoFragment extends YouTubePlayerFragment
             this.videoId = videoId;
             isCue = false;
             if (player != null) {
-                Log.e("thisis load","load");
                 player.loadVideo(videoId);
             }
         }
@@ -83,7 +79,6 @@ public class VideoFragment extends YouTubePlayerFragment
             this.videoId = videoId;
             isCue = true;
             if (player != null) {
-                Log.e("thisis Cue","cue");
                 player.cueVideo(videoId);
             }
         }
@@ -93,7 +88,7 @@ public class VideoFragment extends YouTubePlayerFragment
         if(videoId != null){
             return videoId;
         } else {
-            return "";
+            return null;
         }
     }
 
