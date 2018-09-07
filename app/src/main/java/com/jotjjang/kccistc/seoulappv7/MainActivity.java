@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
@@ -69,6 +70,8 @@ public class MainActivity extends AppCompatActivity
     //comment fragment part
     private boolean isCommentOpen;
     private boolean isTransacting;
+
+    private MenuItem navFirstItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +131,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navFirstItem = navigationView.getMenu().findItem(R.id.nav_hot_clip);
+        navFirstItem.setChecked(true);
 
         checkYouTubeApi();
     }
@@ -247,11 +252,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        if(navFirstItem.isChecked()==true) navFirstItem.setChecked(false);
 
         if (id == R.id.nav_hot_clip) {
             if(isLoading == false)
             {
                 isLoading = true;
+                item.setChecked(true);
                 videoListFragment.scrollToTop();
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 SearchOptionState.setInitJotJJangIndex();
@@ -268,6 +275,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_seoul_news) {
             if(isLoading == false) {
                 isLoading = true;
+                item.setChecked(true);
                 videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_NEWS);
                 asyncTask = new RequestTask().execute();
@@ -402,13 +410,44 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     videoContainer.setVisibility(View.GONE);
-
-                    //여기 하자!
                 }
             });
         } else
         {
-
+            if(isTransacting == false) {
+                isTransacting = true;
+                commentButton.setEnabled(false);
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_left_comment, R.animator.slide_right_comment
+                        , R.animator.slide_left_comment, R.animator.slide_right_comment)
+                        .hide(fragmentManager.findFragmentById(R.id.comment_fragment)).commit();
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_right_list, R.animator.slide_left_list
+                        , R.animator.slide_right_list, R.animator.slide_left_list)
+                        .show(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
+                videoListFragment.getListView().clearChoices();
+                videoFragment.pauseVideo();
+                ViewPropertyAnimator animator = videoContainer.animate()
+                        .translationXBy(videoContainer.getWidth())
+                        .setDuration(ANIMATION_DURATION_MILLIS);
+                runOnAnimationEnd(animator, new Runnable() {
+                    @Override
+                    public void run() {
+                        videoContainer.setVisibility(View.GONE);
+                    }
+                });
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        commentFragment.removeFooter();
+                        commentFragment.clearCommentEntries();
+                        commentButton.setEnabled(true);
+                        isCommentOpen = false;
+                        isTransacting = false;
+                    }
+                }, 450);
+            }
         }
     }
 
@@ -540,16 +579,17 @@ public class MainActivity extends AppCompatActivity
                 idList.add(resultList.get(i).getVideoId());
             }
 
-            HashMap<String,Integer> viewCountHashMap = null;
+            HashMap<String,StatisticsItem> statisticsItemHashMap = new HashMap<>();
             try {
-                viewCountHashMap = MyJsonParser.parseYoutubeViewCount(MyJsonParser.getYoutubeViewCount(idList));
+                statisticsItemHashMap = MyJsonParser.parseYoutubeStatistics(MyJsonParser.getYoutubeStatistics(idList));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             for(int i = 0; i < resultList.size(); i++) {
                 VideoEntry videoEntry = resultList.get(i);
-                videoEntry.setViewCount(viewCountHashMap.get(videoEntry.getVideoId()));
+                videoEntry.setViewCount(statisticsItemHashMap.get(videoEntry.getVideoId()).getViewCount());
+                videoEntry.setCommentCount(statisticsItemHashMap.get(videoEntry.getVideoId()).getCommentCount());
             }
             return null;
         }
@@ -599,16 +639,17 @@ public class MainActivity extends AppCompatActivity
                 idList.add(resultList.get(i).getVideoId());
             }
 
-            HashMap<String,Integer> viewCountHashMap = null;
+            HashMap<String,StatisticsItem> statisticsItemHashMap = new HashMap<>();
             try {
-                viewCountHashMap = MyJsonParser.parseYoutubeViewCount(MyJsonParser.getYoutubeViewCount(idList));
+                statisticsItemHashMap = MyJsonParser.parseYoutubeStatistics(MyJsonParser.getYoutubeStatistics(idList));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             for(int i = 0; i < resultList.size(); i++) {
                 VideoEntry videoEntry = resultList.get(i);
-                videoEntry.setViewCount(viewCountHashMap.get(videoEntry.getVideoId()));
+                videoEntry.setViewCount(statisticsItemHashMap.get(videoEntry.getVideoId()).getViewCount());
+                videoEntry.setCommentCount(statisticsItemHashMap.get(videoEntry.getVideoId()).getCommentCount());
             }
             return null;
         }
@@ -630,7 +671,7 @@ public class MainActivity extends AppCompatActivity
 
     private class HotClipNextTask extends AsyncTask<Void, Void, Void> {
         ArrayList<String> idList = new ArrayList<>();
-        ArrayList<VideoEntry> resultList = null;
+        ArrayList<VideoEntry> resultList = new ArrayList<>();
 
         @Override
         protected void onPreExecute() {

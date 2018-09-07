@@ -49,13 +49,6 @@
                     android:layout_height="wrap_content"
                     android:onClick="onClickComment"
                     android:layout_weight="1"/>
-                <!--<ImageButton-->
-                    <!---->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:src="@android:drawable/btn_dialog"-->
-                    <!---->
-                    <!--/>-->
                 <ImageButton
                     android:id="@+id/close_button"
                     android:layout_width="match_parent"

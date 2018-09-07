@@ -195,4 +195,8 @@ public class SearchOptionState {
     public static void setInitJotJJangIndex() {
         nextJotJJangInex = 1;
     }
+
+    public static Date getCurrentDate() {
+        return currentDate;
+    }
 }

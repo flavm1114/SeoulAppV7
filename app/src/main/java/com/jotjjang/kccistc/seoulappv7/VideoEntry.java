@@ -1,6 +1,9 @@
 package com.jotjjang.kccistc.seoulappv7;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class VideoEntry implements Serializable{
     private final String title;
@@ -14,7 +17,14 @@ public class VideoEntry implements Serializable{
     //private final String thumbnailUrl_medium;
     //private final String thumbnailUrl_high;
     //private final String liveBroadcastContent;
-    private  int viewCount;
+    private int viewCount;
+    private int commentCount;
+    private String viewCountString;
+    private String publishedDateString;
+
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final Date currentDate = SearchOptionState.getCurrentDate();
+    private final long curLong = System.currentTimeMillis();
 
     public VideoEntry(String title, String videoId, String publishedDate,
                       String description, String channelTitle, String thumbnailUrl_default)
@@ -26,10 +36,28 @@ public class VideoEntry implements Serializable{
         this.channelTitle = channelTitle;
         this.thumbnailUrl_default = thumbnailUrl_default;
         this.viewCount = 0;
+        this.commentCount = 0;
+        try {
+            this.publishedDateString = convertToStringPublishedDate(publishedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
+//    public VideoEntry(String title, String videoId, String publishedDate,
+//                      String description, String channelTitle, String thumbnailUrl_default, int viewCount)
+//    {
+//        this.title = title;
+//        this.videoId = videoId;
+//        this.publishedDate = publishedDate;
+//        this.description = description;
+//        this.channelTitle = channelTitle;
+//        this.thumbnailUrl_default = thumbnailUrl_default;
+//        this.viewCount = viewCount;
+//    }
+
     public VideoEntry(String title, String videoId, String publishedDate,
-                      String description, String channelTitle, String thumbnailUrl_default, int viewCount)
+                      String description, String channelTitle, String thumbnailUrl_default, int viewCount, int commentCount)
     {
         this.title = title;
         this.videoId = videoId;
@@ -38,6 +66,13 @@ public class VideoEntry implements Serializable{
         this.channelTitle = channelTitle;
         this.thumbnailUrl_default = thumbnailUrl_default;
         this.viewCount = viewCount;
+        this.commentCount = commentCount;
+        try {
+            this.publishedDateString = convertToStringPublishedDate(publishedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        this.viewCountString = convertToStringViewCount(viewCount);
     }
 
     public String getThumbnailUrl_default() {
@@ -66,5 +101,78 @@ public class VideoEntry implements Serializable{
 
     public int getViewCount() { return viewCount; }
 
-    public void setViewCount(int viewCount) { this.viewCount = viewCount; }
+    public void setViewCount(int viewCount) {
+        this.viewCount = viewCount;
+        this.viewCountString = convertToStringViewCount(viewCount);
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public String getViewCountString() {
+        return viewCountString;
+    }
+
+    public String getPublishedDateString() {
+        return publishedDateString;
+    }
+
+    private String convertToStringPublishedDate(String dateString) throws ParseException {
+        Date registDate = simpleDateFormat.parse(dateString);
+        long regTime = registDate.getTime();
+        long diffTime = (curLong - regTime) / 1000;
+
+        String msg = "x";
+        if(diffTime < TIME_MAXIMUM.SEC) {
+            // sec
+            msg = diffTime + "초전";
+        } else if ((diffTime /= TIME_MAXIMUM.SEC) < TIME_MAXIMUM.MIN) {
+            // min
+            msg = diffTime + "분전";
+        } else if ((diffTime /= TIME_MAXIMUM.MIN) < TIME_MAXIMUM.HOUR) {
+            // hour
+            msg = (diffTime ) + "시간전";
+        } else if ((diffTime /= TIME_MAXIMUM.HOUR) < TIME_MAXIMUM.DAY) {
+            // day
+            msg = (diffTime ) + "일전";
+        } else if ((diffTime /= TIME_MAXIMUM.DAY) < TIME_MAXIMUM.MONTH) {
+            // day
+            msg = (diffTime ) + "달전";
+        } else {
+            diffTime /= TIME_MAXIMUM.MONTH;
+            msg = (diffTime) + "년전";
+        }
+        return msg;
+    }
+
+    private String convertToStringViewCount(int viewCount) {
+        String msg = "x";
+        if (viewCount <= 1000) {
+            msg = viewCount +"";
+        } else if (viewCount < 10000) {
+            msg = (viewCount / 1000)+"천"+(viewCount%1000);
+        } else if (viewCount < 1000000) {
+            msg = (viewCount / 10000)+"만";
+        } else if (viewCount < 10000000) {
+            msg = (viewCount / 1000000)+"백만";
+        } else if (viewCount < 100000000) {
+            msg = (viewCount / 10000000)+"천만";
+        } else {
+            msg = (viewCount / 100000000)+"억";
+        }
+        return msg;
+    }
+
+    private static class TIME_MAXIMUM {
+        public static final int SEC = 60;
+        public static final int MIN = 60;
+        public static final int HOUR = 24;
+        public static final int DAY = 30;
+        public static final int MONTH = 12;
+    }
 }

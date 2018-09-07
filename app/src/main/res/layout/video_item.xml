@@ -37,30 +37,64 @@
           <!--android:textColor="#000"/>-->
       <TextView
           android:id="@+id/item_channelTitle"
-          android:layout_above="@+id/item_viewCount"
+          android:layout_above="@+id/image_view_view_count"
           android:fontFamily="@font/seoul_namsan_l"
-          android:layout_alignLeft="@+id/item_viewCount"
+          android:layout_alignLeft="@+id/image_view_view_count"
           android:maxLines="1"
-          android:layout_width="match_parent"
+          android:layout_width="160dp"
           android:layout_height="wrap_content"
           android:textColor="#000"/>
+      <ImageView
+          android:id="@+id/image_view_view_count"
+          android:src="@drawable/view_count_img_white"
+          android:layout_alignParentBottom="true"
+          android:layout_alignParentLeft="true"
+          android:layout_marginLeft="2dp"
+          android:layout_marginBottom="2dp"
+          android:layout_width="18dp"
+          android:layout_height="18dp" />
       <TextView
           android:id="@+id/item_viewCount"
           android:fontFamily="@font/seoul_namsan_l"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_toRightOf="@id/image_view_view_count"
           android:layout_alignParentBottom="true"
-          android:layout_alignParentLeft="true"
           android:textColor="#000"/>
+      <ImageView
+          android:src="@drawable/chat"
+          android:layout_toLeftOf="@id/item_comment_count"
+          android:layout_alignParentBottom="true"
+          android:id="@+id/image_view_comment"
+          android:layout_width="18dp"
+          android:layout_height="18dp"
+          android:layout_marginBottom="2dp"/>
       <TextView
-          android:id="@+id/item_publishedDate"
+          android:id="@+id/item_comment_count"
           android:fontFamily="@font/seoul_namsan_l"
-          android:layout_marginRight="5dp"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_alignParentBottom="true"
           android:layout_alignParentRight="true"
+          android:layout_alignParentBottom="true"
+          android:textColor="#000"
+          android:layout_marginRight="5dp"/>
+      <TextView
+          android:layout_marginLeft="2dp"
+          android:id="@+id/item_publishedDate"
+          android:fontFamily="@font/seoul_namsan_l"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_above="@id/item_viewCount"
+          android:layout_alignParentRight="true"
+          android:layout_marginRight="5dp"
           android:textColor="#000"/>
+      <ImageView
+          android:src="@drawable/video_publish"
+          android:layout_above="@id/item_viewCount"
+          android:layout_toLeftOf="@id/item_publishedDate"
+          android:layout_width="18dp"
+          android:layout_height="18dp"
+          android:layout_marginBottom="2dp"/>
   </RelativeLayout>
 
 </LinearLayout>

@@ -116,10 +116,12 @@ public class PageAdapter extends BaseAdapter{
 //        textDescription.setText(entry.getDescription());
         TextView textChannelTitle = view.findViewById(R.id.item_channelTitle);
         textChannelTitle.setText(entry.getChannelTitle());
-        TextView textPublishedDate = view.findViewById(R.id.item_publishedDate);
-        textPublishedDate.setText(entry.getPublishedDate());
         TextView textViewCount = view.findViewById(R.id.item_viewCount);
-        textViewCount.setText("조회수:"+entry.getViewCount());
+        textViewCount.setText("조회수:"+entry.getViewCountString());
+        TextView textViewCommentCount = view.findViewById(R.id.item_comment_count);
+        textViewCommentCount.setText("댓글수:"+entry.getCommentCount()+"개");
+        TextView textPublishedDate = view.findViewById(R.id.item_publishedDate);
+        textPublishedDate.setText(entry.getPublishedDateString());
 
         label.setVisibility(labelsVisible ? View.VISIBLE : View.GONE);
         return view;

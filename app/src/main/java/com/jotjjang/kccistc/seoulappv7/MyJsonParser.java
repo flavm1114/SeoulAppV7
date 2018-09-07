@@ -171,7 +171,7 @@ public class MyJsonParser {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            publishedDate = c.getJSONObject("snippet").getString("publishedAt").substring(0,10);
+            publishedDate = c.getJSONObject("snippet").getString("publishedAt").substring(0,19);
             String imgUrl = c.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("default").getString("url");
 
             list.add(new VideoEntry(changedTitle, videoId,publishedDate,changedDescription,changedChannelTitle,imgUrl));
@@ -282,11 +282,14 @@ public class MyJsonParser {
         description = snippet.getString("description");
         channelTitle = snippet.getString("channelTitle");
         String videoId = c.getString("id");
-        String publishedDate = snippet.getString("publishedAt").substring(0,10);
+        String publishedDate = snippet.getString("publishedAt").substring(0,19);
         String imgUrl = snippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
         int viewCount = Integer.parseInt(statistics.getString("viewCount"));
-
-        return new VideoEntry(title,videoId,publishedDate,description,channelTitle,imgUrl,viewCount);
+        int commentCount = 0;
+        if(statistics.has("commentCount")) {
+            commentCount = Integer.parseInt(statistics.getString("commentCount"));
+        }
+        return new VideoEntry(title,videoId,publishedDate,description,channelTitle,imgUrl,viewCount,commentCount);
     }
 
     public static JSONObject getYoutubeItems(ArrayList<String> idList) {
@@ -333,7 +336,6 @@ public class MyJsonParser {
     }
 
     public static ArrayList<VideoEntry> parseYoutubeItems(JSONObject jsonObject) throws JSONException {
-
         ArrayList<VideoEntry> videoEntryArrayList = new ArrayList<>();
         JSONArray contacts = jsonObject.getJSONArray("items");
         for (int i = 0; i < contacts.length(); i++) {
@@ -347,10 +349,14 @@ public class MyJsonParser {
             description = snippet.getString("description");
             channelTitle = snippet.getString("channelTitle");
             String videoId = c.getString("id");
-            String publishedDate = snippet.getString("publishedAt").substring(0,10);
+            String publishedDate = snippet.getString("publishedAt").substring(0,19);
             String imgUrl = snippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
             int viewCount = Integer.parseInt(statistics.getString("viewCount"));
-            videoEntryArrayList.add(new VideoEntry(title,videoId,publishedDate,description,channelTitle,imgUrl,viewCount));
+            int commentCount = 0;
+            if(statistics.has("commentCount")) {
+                commentCount = Integer.parseInt(statistics.getString("commentCount"));
+            }
+            videoEntryArrayList.add(new VideoEntry(title,videoId,publishedDate,description,channelTitle,imgUrl,viewCount,commentCount));
         }
 
         return videoEntryArrayList;
@@ -389,7 +395,7 @@ public class MyJsonParser {
         return jsonObject;
     }
 
-    public static JSONObject getYoutubeViewCount(ArrayList<String> idList) {
+    public static JSONObject getYoutubeStatistics(ArrayList<String> idList) {
         String url = "https://www.googleapis.com/youtube/v3/videos"
                 + "?part=statistics"
                 + "&key=" + DeveloperKey.DEVELOPER_KEY
@@ -432,17 +438,21 @@ public class MyJsonParser {
         return jsonObject;
     }
 
-    public static HashMap<String,Integer> parseYoutubeViewCount(JSONObject jsonObject) throws JSONException {
-        HashMap<String,Integer> viewCountHashMap = new HashMap<>();
+    public static HashMap<String, StatisticsItem> parseYoutubeStatistics(JSONObject jsonObject) throws JSONException {
+        HashMap<String,StatisticsItem> statisticsHashMap = new HashMap<>();
         JSONArray contacts = jsonObject.getJSONArray("items");
         for (int i = 0; i < contacts.length(); i++) {
             JSONObject c = contacts.getJSONObject(i);
             JSONObject statistics = c.getJSONObject("statistics");
             String videoId = c.getString("id");
             int viewCount = Integer.parseInt(statistics.getString("viewCount"));
-            viewCountHashMap.put(videoId,viewCount);
+            int commentCount = 0;
+            if(statistics.has("commentCount")) {
+                commentCount = Integer.parseInt(statistics.getString("commentCount"));
+            }
+            statisticsHashMap.put(videoId, new StatisticsItem(viewCount,commentCount));
         }
-        return viewCountHashMap;
+        return statisticsHashMap;
     }
 
     public static JSONObject getYoutubeComments(String videoId, int maxResults) {
@@ -545,7 +555,7 @@ public class MyJsonParser {
                 String authorProfileImageUrl = snippet2.getString("authorProfileImageUrl");
                 String commentText = snippet2.getString("textDisplay");
                 int likeCount = snippet2.getInt("likeCount");
-                String publishedAt = snippet2.getString("publishedAt").substring(0, 10);
+                String publishedAt = snippet2.getString("publishedAt").substring(0, 19);
                 boolean canReply = snippet.getBoolean("canReply");
                 int totalReplyCount = snippet.getInt("totalReplyCount");
                 boolean isPublic = snippet.getBoolean("isPublic");
@@ -566,7 +576,7 @@ public class MyJsonParser {
                         String reply_videoId = reply_snippet.getString("videoId");
                         String reply_commentText = reply_snippet.getString("textDisplay");
                         int reply_likeCount = reply_snippet.getInt("likeCount");
-                        String reply_publishedAt = reply_snippet.getString("publishedAt").substring(0, 10);
+                        String reply_publishedAt = reply_snippet.getString("publishedAt").substring(0, 19);
 
                         CommentEntry replyEntry = new CommentEntry(reply_commentId, reply_authorName
                                 , reply_authorProfileImageUrl, reply_commentText, reply_videoId
