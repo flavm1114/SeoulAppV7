@@ -68,17 +68,17 @@ public class MyJsonParser {
                         + "&type=video"
                         + "&safeSearch=strict"
                         + "&videoEmbeddable=true");
-        Log.e("zzzzzz","https://www.googleapis.com/youtube/v3/search?"
-                + "part=snippet&q=" + searchKeyWord
-                + "&key=" + DeveloperKey.DEVELOPER_KEY
-                + "&publishedBefore=" + beforeDateKeyWord
-                + "&publishedAfter=" + afterDateKeyWord
-                + "&order=" + orderKeyWord
-                + "&maxResults=" + count
-                + "&regionCode=KR"
-                + "&type=video"
-                + "&safeSearch=strict"
-                + "&videoEmbeddable=true");
+//        Log.e("zzzzzz","https://www.googleapis.com/youtube/v3/search?"
+//                + "part=snippet&q=" + searchKeyWord
+//                + "&key=" + DeveloperKey.DEVELOPER_KEY
+//                + "&publishedBefore=" + beforeDateKeyWord
+//                + "&publishedAfter=" + afterDateKeyWord
+//                + "&order=" + orderKeyWord
+//                + "&maxResults=" + count
+//                + "&regionCode=KR"
+//                + "&type=video"
+//                + "&safeSearch=strict"
+//                + "&videoEmbeddable=true");
 
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;

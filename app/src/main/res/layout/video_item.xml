@@ -37,16 +37,17 @@
           <!--android:textColor="#000"/>-->
       <TextView
           android:id="@+id/item_channelTitle"
-          android:layout_above="@+id/image_view_view_count"
+          android:layout_above="@+id/image_view_comment"
           android:fontFamily="@font/seoul_namsan_l"
-          android:layout_alignLeft="@+id/image_view_view_count"
+          android:layout_alignLeft="@+id/image_view_comment"
           android:maxLines="1"
-          android:layout_width="160dp"
+          android:maxWidth="120dp"
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:textColor="#000"/>
       <ImageView
-          android:id="@+id/image_view_view_count"
-          android:src="@drawable/view_count_img_white"
+          android:src="@drawable/chat"
+          android:id="@+id/image_view_comment"
           android:layout_alignParentBottom="true"
           android:layout_alignParentLeft="true"
           android:layout_marginLeft="2dp"
@@ -54,23 +55,23 @@
           android:layout_width="18dp"
           android:layout_height="18dp" />
       <TextView
-          android:id="@+id/item_viewCount"
+          android:id="@+id/item_comment_count"
           android:fontFamily="@font/seoul_namsan_l"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_toRightOf="@id/image_view_view_count"
+          android:layout_toRightOf="@id/image_view_comment"
           android:layout_alignParentBottom="true"
           android:textColor="#000"/>
       <ImageView
-          android:src="@drawable/chat"
-          android:layout_toLeftOf="@id/item_comment_count"
+          android:id="@+id/image_view_view_count"
+          android:src="@drawable/view_count_img_white"
+          android:layout_toLeftOf="@id/item_viewCount"
           android:layout_alignParentBottom="true"
-          android:id="@+id/image_view_comment"
           android:layout_width="18dp"
           android:layout_height="18dp"
           android:layout_marginBottom="2dp"/>
       <TextView
-          android:id="@+id/item_comment_count"
+          android:id="@+id/item_viewCount"
           android:fontFamily="@font/seoul_namsan_l"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"

@@ -39,23 +39,60 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <LinearLayout
+                android:background="@color/colorPrimary"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="46dp"
                 android:orientation="horizontal"
                 android:layout_below="@id/video_fragment">
-                <ToggleButton
-                    android:id="@+id/comment_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClickComment"
-                    android:layout_weight="1"/>
-                <ImageButton
-                    android:id="@+id/close_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <FrameLayout
                     android:layout_weight="1"
-                    android:src="@android:drawable/btn_dialog"
-                    android:onClick="onClickClose"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <ImageButton
+                        android:src="@drawable/chat_white_128"
+                        android:scaleType="fitStart"
+                        android:paddingVertical="10dp"
+                        android:paddingLeft="20dp"
+                        android:background="@drawable/button_v4"
+                        android:id="@+id/comment_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:onClick="onClickComment" />
+                    <TextView
+                        android:id="@+id/comment_textView"
+                        android:fontFamily="@font/seoul_namsan_m"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="15dp"
+                        android:text="0개의 댓글"
+                        android:paddingLeft="30dp"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </FrameLayout>
+                <FrameLayout
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <ImageButton
+                        android:src="@drawable/close_img"
+                        android:background="@drawable/button_v4"
+                        android:scaleType="fitCenter"
+                        android:paddingVertical="12dp"
+                        android:paddingLeft="-35dp"
+                        android:id="@+id/close_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:onClick="onClickClose"/>
+                    <TextView
+                        android:textSize="17dp"
+                        android:fontFamily="@font/seoul_namsan_m"
+                        android:textColor="@color/colorPrimary"
+                        android:gravity="center"
+                        android:paddingLeft="25dp"
+                        android:text="닫기"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </FrameLayout>
             </LinearLayout>
         </RelativeLayout>
         <FrameLayout
@@ -87,5 +124,6 @@
         <!--android:layout_gravity="bottom|end"-->
         <!--android:layout_margin="@dimen/fab_margin"-->
         <!--app:srcCompat="@android:drawable/ic_dialog_email" />-->
+    <!--android:src="@android:drawable/btn_dialog"-->
 
 </android.support.design.widget.CoordinatorLayout>

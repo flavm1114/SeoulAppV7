@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.Animation;
 import android.widget.AbsListView;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity
     private View videoContainer;
     private View listContainer;
     private View closeButton;
-    private ToggleButton commentButton;
+    private ImageButton commentButton;
 
     //progressbar, loading, scroll contents
     private ProgressBar loadingProgressBar;

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -59,7 +60,9 @@ public class VideoListFragment extends ListFragment {
         listView.setItemChecked(0, true);
         listView.setSelector(R.drawable.empty_selector);
         noMoreImageView = new ImageView(getActivity());
-        noMoreImageView.setImageResource(R.drawable.no_more_clip_s);
+        noMoreImageView.setImageResource(R.drawable.no_more_clip_l);
+        noMoreImageView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        noMoreImageView.setAdjustViewBounds(true);
     }
 
     @Override

@@ -51,7 +51,9 @@ public class CommentFragment extends ListFragment {
         listView.setChoiceMode(ListView.CHOICE_MODE_NONE);
         setListAdapter(adapter);
         noMoreImageView = new ImageView(getActivity());
-        noMoreImageView.setImageResource(R.drawable.no_more_comment_s);
+        noMoreImageView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        noMoreImageView.setAdjustViewBounds(true);
+        noMoreImageView.setImageResource(R.drawable.no_more_comment_l);
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override

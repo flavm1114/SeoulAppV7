@@ -117,9 +117,9 @@ public class PageAdapter extends BaseAdapter{
         TextView textChannelTitle = view.findViewById(R.id.item_channelTitle);
         textChannelTitle.setText(entry.getChannelTitle());
         TextView textViewCount = view.findViewById(R.id.item_viewCount);
-        textViewCount.setText("조회수:"+entry.getViewCountString());
+        textViewCount.setText(entry.getViewCountString()+"회");
         TextView textViewCommentCount = view.findViewById(R.id.item_comment_count);
-        textViewCommentCount.setText("댓글수:"+entry.getCommentCount()+"개");
+        textViewCommentCount.setText("댓글"+entry.getCommentCount()+"개");
         TextView textPublishedDate = view.findViewById(R.id.item_publishedDate);
         textPublishedDate.setText(entry.getPublishedDateString());
 
