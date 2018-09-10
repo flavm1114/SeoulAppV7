@@ -10,19 +10,19 @@
                     <item
                         android:id="@+id/nav_hot_clip"
                         android:icon="@drawable/ic_star"
-                        android:title="잘생겼다 서울" />
+                        android:title="@string/category_name_1" />
                     <item
                         android:id="@+id/nav_seoul_news"
                         android:icon="@drawable/ic_megaphone"
-                        android:title="서울 소식" />
+                        android:title="@string/category_name_2" />
                     <item
                         android:id="@+id/nav_seoul_festival"
                         android:icon="@drawable/ic_confetti"
-                        android:title="서울의 축제" />
+                        android:title="@string/category_name_3" />
                     <item
                         android:id="@+id/nav_seoul_food"
                         android:icon="@drawable/ic_cooking"
-                        android:title="맛있는 서울" />
+                        android:title="@string/category_name_4" />
                 </group>
             </menu>
         </item>
@@ -30,19 +30,19 @@
             <item
                 android:id="@+id/nav_news"
                 android:icon="@drawable/ic_news"
-                android:title="뉴스" />
+                android:title="@string/category_name_5" />
             <item
                 android:id="@+id/nav_sports"
                 android:icon="@drawable/ic_running"
-                android:title="스포츠" />
+                android:title="@string/category_name_6" />
             <item
                 android:id="@+id/nav_humor"
                 android:icon="@drawable/ic_smile"
-                android:title="웃긴영상" />
+                android:title="@string/category_name_7" />
             <item
                 android:id="@+id/nav_kpop"
                 android:icon="@drawable/ic_quaver_outline"
-                android:title="K-POP"/>
+                android:title="@string/category_name_8"/>
         </group>
     </group>
 </menu>

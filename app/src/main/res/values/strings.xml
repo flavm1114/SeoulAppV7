@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">서울Clip (오늘의 클립영상)</string>
+    <string name="app_name">서울CLIP(오늘의클립영상)</string>
     <string name="app_sub_name">오늘의 클립영상</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -17,6 +17,15 @@
     <string name="setting_relevance">관련성</string>
     <string name="setting_viewCount">조회수</string>
     <string name="setting_rating">추천수</string>
+
+    <string name="category_name_1">잘생겼다 서울</string>
+    <string name="category_name_2">서울 소식</string>
+    <string name="category_name_3">서울의 축제</string>
+    <string name="category_name_4">맛있는 서울</string>
+    <string name="category_name_5">뉴스</string>
+    <string name="category_name_6">스포츠</string>
+    <string name="category_name_7">웃긴영상</string>
+    <string name="category_name_8">K-POP</string>
 
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
 </resources>

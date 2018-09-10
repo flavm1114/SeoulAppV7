@@ -21,12 +21,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
-import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -35,7 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
@@ -56,6 +54,8 @@ public class MainActivity extends AppCompatActivity
     private View listContainer;
     private View closeButton;
     private ImageButton commentButton;
+    private TextView commentTextView;
+    private TextView titleTextView;
 
     //progressbar, loading, scroll contents
     private ProgressBar loadingProgressBar;
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //layout contents FOR activity, youtube
@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity
         listContainer = findViewById(R.id.list_container);
         closeButton = findViewById(R.id.close_button);
         commentButton = findViewById(R.id.comment_button);
+        commentTextView = findViewById(R.id.comment_textView);
+        titleTextView = findViewById(R.id.app_bar_title);
         //videoContainer.setVisibility(View.GONE);
 
         //progressbar, loading, scroll contents
@@ -134,6 +136,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navFirstItem = navigationView.getMenu().findItem(R.id.nav_hot_clip);
         navFirstItem.setChecked(true);
+
+        commentTextView.setText(hotclip.get(0).getCommentCount()+" 개의 댓글");
 
         checkYouTubeApi();
     }
@@ -268,6 +272,7 @@ public class MainActivity extends AppCompatActivity
                 videoListFragment.clearVideoEntries();
                 videoListFragment.addVideoEntries(hotclip);
                 loadingProgressBar.setVisibility(View.GONE);
+                titleTextView.setText(R.string.category_name_1);
                 isLoading = false;
             } else
             {
@@ -276,6 +281,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_seoul_news) {
             if(isLoading == false) {
                 isLoading = true;
+                titleTextView.setText(R.string.category_name_2);
                 item.setChecked(true);
                 videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_NEWS);
@@ -287,6 +293,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_seoul_festival) {
             if(isLoading == false) {
                 isLoading = true;
+                titleTextView.setText(R.string.category_name_3);
                 videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_FESTIVAL);
                 asyncTask = new RequestTask().execute();
@@ -297,6 +304,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_seoul_food) {
             if(isLoading == false) {
                 isLoading = true;
+                titleTextView.setText(R.string.category_name_4);
                 videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_FOOD);
                 asyncTask = new RequestTask().execute();
@@ -307,6 +315,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_news) {
             if(isLoading == false) {
                 isLoading = true;
+                titleTextView.setText(R.string.category_name_5);
                 videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_NEWS);
                 asyncTask = new RequestTask().execute();
@@ -317,6 +326,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_sports) {
             if(isLoading == false) {
                 isLoading = true;
+                titleTextView.setText(R.string.category_name_6);
                 videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SPORTS);
                 asyncTask = new RequestTask().execute();
@@ -327,6 +337,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_humor) {
             if(isLoading == false) {
                 isLoading = true;
+                titleTextView.setText(R.string.category_name_7);
                 videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HUMOR);
                 asyncTask = new RequestTask().execute();
@@ -337,6 +348,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_kpop) {
             if(isLoading == false) {
                 isLoading = true;
+                titleTextView.setText(R.string.category_name_8);
                 videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_KPOP);
                 asyncTask = new RequestTask().execute();

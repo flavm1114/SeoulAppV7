@@ -10,15 +10,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:titleTextAppearance="@style/TitleBarTextAppearance"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:translationX="-14dp"
+                    android:id="@+id/app_bar_logo"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/logo_v4_s"
+                    android:adjustViewBounds="true"
+                    android:translationY="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+                <TextView
+                    android:id="@+id/app_bar_title"
+                    android:text="@string/category_name_1"
+                    android:textAppearance="@style/TitleBarTextAppearance"
+                    android:layout_toRightOf="@id/app_bar_logo"
+                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+            </RelativeLayout>
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
@@ -62,7 +82,7 @@
                         android:id="@+id/comment_textView"
                         android:fontFamily="@font/seoul_namsan_m"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="15dp"
+                        android:textSize="16dp"
                         android:text="0개의 댓글"
                         android:paddingLeft="30dp"
                         android:gravity="center"
@@ -125,5 +145,6 @@
         <!--android:layout_margin="@dimen/fab_margin"-->
         <!--app:srcCompat="@android:drawable/ic_dialog_email" />-->
     <!--android:src="@android:drawable/btn_dialog"-->
+    <!--app:titleTextAppearance="@style/TitleBarTextAppearance"-->
 
 </android.support.design.widget.CoordinatorLayout>

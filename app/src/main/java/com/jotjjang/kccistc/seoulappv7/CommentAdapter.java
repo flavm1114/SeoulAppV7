@@ -62,10 +62,12 @@ public class CommentAdapter extends BaseAdapter {
 
         Glide.with(context).load(entry.getAuthorProfileImageUrl()).into(imageViewProfile);
         textViewAuthorName.setText(entry.getAuthorName());
-        textViewPublishedAt.setText(entry.getPublishedAt());
+        textViewPublishedAt.setText(entry.getPublishedDateString());
         textViewContentText.setText(entry.getCommentText());
-        textViewReplyCount.setText(entry.getTotalReplyCount()+"");
-
+        if(entry.getTotalReplyCount() > 0) {
+            textViewReplyCount.setText(entry.getTotalReplyCount() + " 개의 답글");
+            textViewReplyCount.setVisibility(View.VISIBLE);
+        }
         return view;
     }
 }

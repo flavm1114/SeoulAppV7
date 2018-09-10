@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class VideoListFragment extends ListFragment {
     private View mainContainer;
     private ListView listView;
     private ImageView noMoreImageView;
+    private TextView commentCountTextView;
 
     public void addVideoItem(VideoEntry videoEntry) {
         adapter.addVideoItem(videoEntry);
@@ -63,6 +65,7 @@ public class VideoListFragment extends ListFragment {
         noMoreImageView.setImageResource(R.drawable.no_more_clip_l);
         noMoreImageView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         noMoreImageView.setAdjustViewBounds(true);
+        commentCountTextView = getActivity().findViewById(R.id.comment_textView);
     }
 
     @Override
@@ -92,6 +95,7 @@ public class VideoListFragment extends ListFragment {
             videoContainer.animate().translationX(0).setDuration(MainActivity.ANIMATION_DURATION_MILLIS);
         }
         videoFragment.loadVideo(videoId);
+        commentCountTextView.setText(VIDEO_LIST.get(position).getCommentCount()+" 개의 댓글");
     }
 
     public void scrollToTop() {

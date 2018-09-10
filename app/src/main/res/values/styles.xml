@@ -43,7 +43,7 @@
     <style name="TitleBarTextAppearance" parent="android:TextAppearance">
         <item name="android:fontFamily"
             tools:targetApi="jelly_bean">@font/seoul_namsan_m</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
 
