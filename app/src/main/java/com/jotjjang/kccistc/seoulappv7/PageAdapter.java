@@ -1,6 +1,7 @@
 package com.jotjjang.kccistc.seoulappv7;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,11 @@ public class PageAdapter extends BaseAdapter{
 
     public void releaseLoaders() {
         for (YouTubeThumbnailLoader loader : thumbnailViewToLoaderMap.values()) {
-            loader.release();
+            try {
+                loader.release();
+            } catch (IllegalStateException e) {
+
+            }
         }
     }
 
@@ -105,7 +110,11 @@ public class PageAdapter extends BaseAdapter{
                 // 3) The view is already created and already initialized. Simply set the right videoId
                 //    on the loader.
                 thumbnail.setImageResource(R.drawable.loading_thumbnail);
-                loader.setVideo(entry.getVideoId());
+                try {
+                    loader.setVideo(entry.getVideoId());
+                } catch (IllegalStateException e) {
+
+                }
             }
         }
 
@@ -122,9 +131,18 @@ public class PageAdapter extends BaseAdapter{
         textViewCommentCount.setText("댓글 "+entry.getCommentCount()+"개");
         TextView textPublishedDate = view.findViewById(R.id.item_publishedDate);
         textPublishedDate.setText(entry.getPublishedDateString());
+//        if(VideoListFragment.checkdPosition == position) {
+//            label.setBackgroundColor(view.getResources().getColor(R.color.colorAccentSky));
+//        } else {
+//            label.setBackgroundColor(view.getResources().getColor(R.color.colorPrimary));
+//        }
 
         label.setVisibility(labelsVisible ? View.VISIBLE : View.GONE);
         return view;
+    }
+
+    public View getView(int position) {
+        return null;
     }
 
     private final class ThumbnailListener implements
@@ -138,7 +156,11 @@ public class PageAdapter extends BaseAdapter{
             thumbnailViewToLoaderMap.put(view, loader);
             view.setImageResource(R.drawable.loading_thumbnail);
             String videoId = (String) view.getTag();
-            loader.setVideo(videoId);
+            try {
+                loader.setVideo(videoId);
+            } catch (IllegalStateException e) {
+
+            }
         }
 
         @Override

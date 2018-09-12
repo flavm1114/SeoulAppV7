@@ -6,11 +6,10 @@
         <item name="actionBarSize">@dimen/action_bar_size</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimaryBlue2</item>
         <item name="drawerArrowStyle">@style/DrawerHamburgerStyle</item>
 
         <item name="android:actionOverflowButtonStyle">@style/AppTheme.OverFlow</item>
-
     </style>
 
     <style name="DrawerHamburgerStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">

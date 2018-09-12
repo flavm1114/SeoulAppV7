@@ -73,7 +73,7 @@
                         android:scaleType="fitStart"
                         android:paddingVertical="10dp"
                         android:paddingLeft="20dp"
-                        android:background="@drawable/button_v4"
+                        android:background="@drawable/btn_comment"
                         android:id="@+id/comment_button"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -95,7 +95,7 @@
                     android:layout_height="match_parent">
                     <ImageButton
                         android:src="@drawable/close_img"
-                        android:background="@drawable/button_v4"
+                        android:background="@drawable/btn_comment"
                         android:scaleType="fitCenter"
                         android:paddingVertical="12dp"
                         android:paddingLeft="-35dp"
@@ -131,8 +131,8 @@
                 android:layout_height="match_parent" />
             <ProgressBar
                 android:id="@+id/loading_progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"/>
         </FrameLayout>
     </LinearLayout>

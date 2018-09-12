@@ -52,9 +52,17 @@ public class VideoFragment extends YouTubePlayerFragment
         });
         if (!b && videoId != null) {
             if(isCue == true) {
-                player.cueVideo(videoId);
+                try {
+                    player.cueVideo(videoId);
+                } catch (IllegalStateException e) {
+                    initialize(DeveloperKey.DEVELOPER_KEY, this);
+                }
             } else {
-                player.loadVideo(videoId);
+                try {
+                    player.loadVideo(videoId);
+                } catch (IllegalStateException e) {
+                    initialize(DeveloperKey.DEVELOPER_KEY, this);
+                }
             }
         }
     }
@@ -69,7 +77,11 @@ public class VideoFragment extends YouTubePlayerFragment
             this.videoId = videoId;
             isCue = false;
             if (player != null) {
-                player.loadVideo(videoId);
+                try {
+                    player.loadVideo(videoId);
+                } catch (IllegalStateException e) {
+                    initialize(DeveloperKey.DEVELOPER_KEY, this);
+                }
             }
         }
     }
@@ -79,7 +91,11 @@ public class VideoFragment extends YouTubePlayerFragment
             this.videoId = videoId;
             isCue = true;
             if (player != null) {
-                player.cueVideo(videoId);
+                try {
+                    player.cueVideo(videoId);
+                } catch (IllegalStateException e) {
+                    initialize(DeveloperKey.DEVELOPER_KEY, this);
+                }
             }
         }
     }
@@ -94,7 +110,11 @@ public class VideoFragment extends YouTubePlayerFragment
 
     public void pauseVideo() {
         if (player != null) {
-            player.pause();
+            try {
+                player.pause();
+            } catch (IllegalStateException e) {
+                initialize(DeveloperKey.DEVELOPER_KEY, this);
+            }
         }
     }
 

@@ -6,6 +6,8 @@ import android.annotation.TargetApi;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -99,7 +101,10 @@ public class MainActivity extends AppCompatActivity
 
         //progressbar, loading, scroll contents
         loadingProgressBar = findViewById(R.id.loading_progress_bar);
+        //loadingProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_drawable));
+        loadingProgressBar.getIndeterminateDrawable().setColorFilter(0xFFFF4081, android.graphics.PorterDuff.Mode.MULTIPLY);
         loadingProgressBar.setVisibility(View.GONE);
+
         isScrollEnd = false;
         videoListFragment.getListView().setOnScrollListener(this);
 
@@ -163,6 +168,32 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else if (videoFragment.getIsFullScreen()) {
             videoFragment.setFullscreen(false);
+        } else if (isCommentOpen == true) {
+            if(isTransacting == false) {
+                isTransacting = true;
+                commentButton.setEnabled(false);
+                FragmentManager fragmentManager = getFragmentManager();
+                isCommentOpen = false;
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_left_comment, R.animator.slide_right_comment
+                        , R.animator.slide_left_comment, R.animator.slide_right_comment)
+                        .hide(fragmentManager.findFragmentById(R.id.comment_fragment)).commit();
+                fragmentManager.beginTransaction().setCustomAnimations(
+                        R.animator.slide_right_list, R.animator.slide_left_list
+                        , R.animator.slide_right_list, R.animator.slide_left_list)
+                        .show(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
+                new Handler().postDelayed(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        commentFragment.removeFooter();
+                        commentFragment.clearCommentEntries();
+                        commentButton.setEnabled(true);
+                        isTransacting = false;
+                    }
+                }, 450);
+            }
         } else {
             super.onBackPressed();
         }
@@ -283,7 +314,6 @@ public class MainActivity extends AppCompatActivity
                 isLoading = true;
                 titleTextView.setText(R.string.category_name_2);
                 item.setChecked(true);
-                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_NEWS);
                 asyncTask = new RequestTask().execute();
             } else
@@ -294,7 +324,6 @@ public class MainActivity extends AppCompatActivity
             if(isLoading == false) {
                 isLoading = true;
                 titleTextView.setText(R.string.category_name_3);
-                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_FESTIVAL);
                 asyncTask = new RequestTask().execute();
             } else
@@ -305,7 +334,6 @@ public class MainActivity extends AppCompatActivity
             if(isLoading == false) {
                 isLoading = true;
                 titleTextView.setText(R.string.category_name_4);
-                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SEOUL_FOOD);
                 asyncTask = new RequestTask().execute();
             } else
@@ -316,7 +344,6 @@ public class MainActivity extends AppCompatActivity
             if(isLoading == false) {
                 isLoading = true;
                 titleTextView.setText(R.string.category_name_5);
-                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_NEWS);
                 asyncTask = new RequestTask().execute();
             } else
@@ -327,7 +354,6 @@ public class MainActivity extends AppCompatActivity
             if(isLoading == false) {
                 isLoading = true;
                 titleTextView.setText(R.string.category_name_6);
-                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SPORTS);
                 asyncTask = new RequestTask().execute();
             } else
@@ -338,7 +364,6 @@ public class MainActivity extends AppCompatActivity
             if(isLoading == false) {
                 isLoading = true;
                 titleTextView.setText(R.string.category_name_7);
-                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HUMOR);
                 asyncTask = new RequestTask().execute();
             } else
@@ -349,7 +374,6 @@ public class MainActivity extends AppCompatActivity
             if(isLoading == false) {
                 isLoading = true;
                 titleTextView.setText(R.string.category_name_8);
-                videoListFragment.scrollToTop();
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_KPOP);
                 asyncTask = new RequestTask().execute();
             } else
@@ -619,6 +643,7 @@ public class MainActivity extends AppCompatActivity
             videoListFragment.setUnFocusCheckdItem();
             videoListFragment.clearVideoEntries();
             videoListFragment.addVideoEntries(resultList);
+            videoListFragment.scrollToTop();
             loadingProgressBar.setVisibility(View.GONE);
             isLoading = false;
         }

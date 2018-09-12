@@ -20,6 +20,7 @@ public class CommentAdapter extends BaseAdapter {
     private final ArrayList<CommentEntry> entries;
     private final ArrayList<View> entryViews;
     private final LayoutInflater inflater;
+    private  ArrayList<View> replyViews;
 
     public CommentAdapter(Context context, ArrayList<CommentEntry> entries)
     {
@@ -27,6 +28,7 @@ public class CommentAdapter extends BaseAdapter {
         this.entries = entries;
         entryViews = new ArrayList<>();
         inflater = LayoutInflater.from(context);
+        replyViews = new ArrayList<>();
     }
 
     @Override
@@ -45,7 +47,7 @@ public class CommentAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
         View view = convertView;
         CommentEntry entry = entries.get(position);
 
@@ -58,15 +60,37 @@ public class CommentAdapter extends BaseAdapter {
         TextView textViewAuthorName = view.findViewById(R.id.comment_authorName);
         TextView textViewPublishedAt = view.findViewById(R.id.comment_publishedAt);
         TextView textViewContentText = view.findViewById(R.id.comment_content_text);
-        TextView textViewReplyCount = view.findViewById(R.id.comment_reply_count);
+        final TextView textViewReplyCount = view.findViewById(R.id.comment_reply_count);
 
         Glide.with(context).load(entry.getAuthorProfileImageUrl()).into(imageViewProfile);
         textViewAuthorName.setText(entry.getAuthorName());
         textViewPublishedAt.setText(entry.getPublishedDateString());
         textViewContentText.setText(entry.getCommentText());
+
+
+
         if(entry.getTotalReplyCount() > 0) {
             textViewReplyCount.setText(entry.getTotalReplyCount() + " 개의 답글");
             textViewReplyCount.setVisibility(View.VISIBLE);
+            final View originView = view;
+            textViewReplyCount.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    textViewReplyCount.setVisibility(View.GONE);
+//                    TextView replyView = new TextView(context);
+//                    replyView.setText("ㅎㅇㅎㅇ1");
+//                    replyViews.add(replyView);
+//                    TextView replyView2 = new TextView(context);
+//                    replyView.setText("ㅎㅇㅎㅇ2");
+//                    replyViews.add(replyView2);
+//                    TextView replyView3 = new TextView(context);
+//                    replyView.setText("ㅎㅇㅎㅇ3");
+//                    replyViews.add(replyView3);
+//                    ((RelativeLayout)originView).addView(replyView, ((RelativeLayout) originView).getChildCount() - 1);
+//                    ((RelativeLayout)originView).addView(replyView2, ((RelativeLayout)originView).getChildCount() - 1);
+//                    ((RelativeLayout)originView).addView(replyView3, ((RelativeLayout)originView).getChildCount() - 1);
+                }
+            });
         }
         return view;
     }

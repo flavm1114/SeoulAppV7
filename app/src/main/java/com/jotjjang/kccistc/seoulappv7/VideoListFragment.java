@@ -3,15 +3,22 @@ package com.jotjjang.kccistc.seoulappv7;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Checkable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,10 +64,17 @@ public class VideoListFragment extends ListFragment {
         videoContainer = getActivity().findViewById(R.id.video_container);
         mainContainer = getActivity().findViewById(R.id.main_container);
         listView = getListView();
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         setListAdapter(adapter);
+        //listView.setDrawSelectorOnTop(false);
+        //listView.setCacheColorHint(Color.parseColor("#00000000"));
+        //listView.setCacheColorHint(Color.TRANSPARENT);
+        //listView.setScrollingCacheEnabled(false);
         listView.setItemChecked(0, true);
         listView.setSelector(R.drawable.empty_selector);
+        //listView.setFocusable(true);
+        //listView.setFocusableInTouchMode(true);
+        //listView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         noMoreImageView = new ImageView(getActivity());
         noMoreImageView.setImageResource(R.drawable.no_more_clip_l);
         noMoreImageView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -76,26 +90,43 @@ public class VideoListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        String videoId = VIDEO_LIST.get(position).getVideoId();
+//        Log.e("gdgdVIDEO_LIST_SIZE",VIDEO_LIST.size()+"");
+        if(position < VIDEO_LIST.size()) {
+//            for (int i = 0; i < VIDEO_LIST.size(); i++) {
+//                if (i == position) {
+//                    setHighlight(i, true);
+//                } else {
+//                    setHighlight(i, false);
+//                }
+//            }
+////            l.getchil
+////            l.getChildAt(2).findViewById(R.id.item_label).setBackgroundColor(Color.WHITE);
+//                //((LinearLayout)l.getChildAt(i)).setBackgroundColor(Color.WHITE);
+//            }
+//        Log.e("getChildCount",l.getChildCount()+"");
+//        ((LinearLayout)v).setBackgroundColor(Color.RED);
 
-        VideoFragment videoFragment =
-                (VideoFragment) getFragmentManager().findFragmentById(R.id.video_fragment);
+            String videoId = VIDEO_LIST.get(position).getVideoId();
 
-        // The videoBox is INVISIBLE if no video was previously selected, so we need to show it now.
-        if (videoContainer.getVisibility() != View.VISIBLE) {
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                // Initially translate off the screen so that it can be animated in from below.
-                videoContainer.setTranslationX(mainContainer.getWidth());
+            VideoFragment videoFragment =
+                    (VideoFragment) getFragmentManager().findFragmentById(R.id.video_fragment);
+
+            // The videoBox is INVISIBLE if no video was previously selected, so we need to show it now.
+            if (videoContainer.getVisibility() != View.VISIBLE) {
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    // Initially translate off the screen so that it can be animated in from below.
+                    videoContainer.setTranslationX(mainContainer.getWidth());
+                }
+                videoContainer.setVisibility(View.VISIBLE);
             }
-            videoContainer.setVisibility(View.VISIBLE);
-        }
 
-        // If the fragment is off the screen, we animate it in.
-        if (videoContainer.getTranslationX() > 0) {
-            videoContainer.animate().translationX(0).setDuration(MainActivity.ANIMATION_DURATION_MILLIS);
+            // If the fragment is off the screen, we animate it in.
+            if (videoContainer.getTranslationX() > 0) {
+                videoContainer.animate().translationX(0).setDuration(MainActivity.ANIMATION_DURATION_MILLIS);
+            }
+            videoFragment.loadVideo(videoId);
+            commentCountTextView.setText(VIDEO_LIST.get(position).getCommentCount() + " 개의 댓글");
         }
-        videoFragment.loadVideo(videoId);
-        commentCountTextView.setText(VIDEO_LIST.get(position).getCommentCount()+" 개의 댓글");
     }
 
     public void scrollToTop() {
@@ -115,5 +146,22 @@ public class VideoListFragment extends ListFragment {
 
     public void removeFooter() {
         listView.removeFooterView(noMoreImageView);
+    }
+
+    private void setHighlight(int pos, boolean on) {
+        int firstPos = listView.getFirstVisiblePosition();
+        int wantedPos = pos-firstPos;
+        if (wantedPos < 0 || wantedPos >= listView.getChildCount()) {
+            return;
+        }
+        View childView = listView.getChildAt(wantedPos);
+        if(childView == null) {
+            return;
+        }
+        if(on) {
+            childView.setBackgroundColor(Color.BLUE);
+        } else {
+            childView.setBackgroundColor(Color.WHITE);
+        }
     }
 }
