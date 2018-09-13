@@ -14,6 +14,7 @@
 
     <style name="DrawerHamburgerStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
+        <item name="thickness">3dp</item>
         <item name="color">@color/colorPrimaryBlue</item>
     </style>
 
@@ -22,10 +23,8 @@
 
     <style name="AppTheme.OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@color/colorPrimaryBlue</item>
+        <item name="android:src">@drawable/ic_sort_by_attributes</item>
     </style>
-
-
-
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>

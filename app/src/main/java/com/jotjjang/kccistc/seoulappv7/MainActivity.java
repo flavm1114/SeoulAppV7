@@ -258,6 +258,33 @@ public class MainActivity extends AppCompatActivity
                 if(isLoading == false) {
                     isLoading = true;
                     asyncTask = new RequestTask().execute();
+                    if (isCommentOpen == true) {
+                        if(isTransacting == false) {
+                            isTransacting = true;
+                            commentButton.setEnabled(false);
+                            FragmentManager fragmentManager = getFragmentManager();
+                            isCommentOpen = false;
+                            fragmentManager.beginTransaction().setCustomAnimations(
+                                    R.animator.slide_left_comment, R.animator.slide_right_comment
+                                    , R.animator.slide_left_comment, R.animator.slide_right_comment)
+                                    .hide(fragmentManager.findFragmentById(R.id.comment_fragment)).commit();
+                            fragmentManager.beginTransaction().setCustomAnimations(
+                                    R.animator.slide_right_list, R.animator.slide_left_list
+                                    , R.animator.slide_right_list, R.animator.slide_left_list)
+                                    .show(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
+                            new Handler().postDelayed(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    commentFragment.removeFooter();
+                                    commentFragment.clearCommentEntries();
+                                    commentButton.setEnabled(true);
+                                    isTransacting = false;
+                                }
+                            }, 450);
+                        }
+                    }
                 }
                 return true;
             } else if (item.getGroupId() == R.id.setting_group_order) {
@@ -276,6 +303,33 @@ public class MainActivity extends AppCompatActivity
                 if(isLoading == false) {
                     isLoading = true;
                     asyncTask = new RequestTask().execute();
+                    if (isCommentOpen == true) {
+                        if(isTransacting == false) {
+                            isTransacting = true;
+                            commentButton.setEnabled(false);
+                            FragmentManager fragmentManager = getFragmentManager();
+                            isCommentOpen = false;
+                            fragmentManager.beginTransaction().setCustomAnimations(
+                                    R.animator.slide_left_comment, R.animator.slide_right_comment
+                                    , R.animator.slide_left_comment, R.animator.slide_right_comment)
+                                    .hide(fragmentManager.findFragmentById(R.id.comment_fragment)).commit();
+                            fragmentManager.beginTransaction().setCustomAnimations(
+                                    R.animator.slide_right_list, R.animator.slide_left_list
+                                    , R.animator.slide_right_list, R.animator.slide_left_list)
+                                    .show(fragmentManager.findFragmentById(R.id.list_fragment)).commit();
+                            new Handler().postDelayed(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    commentFragment.removeFooter();
+                                    commentFragment.clearCommentEntries();
+                                    commentButton.setEnabled(true);
+                                    isTransacting = false;
+                                }
+                            }, 450);
+                        }
+                    }
                 }
                 return true;
             }

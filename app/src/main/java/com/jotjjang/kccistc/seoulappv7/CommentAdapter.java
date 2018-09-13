@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,7 +21,6 @@ public class CommentAdapter extends BaseAdapter {
     private final ArrayList<CommentEntry> entries;
     private final ArrayList<View> entryViews;
     private final LayoutInflater inflater;
-    private  ArrayList<View> replyViews;
 
     public CommentAdapter(Context context, ArrayList<CommentEntry> entries)
     {
@@ -28,7 +28,6 @@ public class CommentAdapter extends BaseAdapter {
         this.entries = entries;
         entryViews = new ArrayList<>();
         inflater = LayoutInflater.from(context);
-        replyViews = new ArrayList<>();
     }
 
     @Override
@@ -67,15 +66,17 @@ public class CommentAdapter extends BaseAdapter {
         textViewPublishedAt.setText(entry.getPublishedDateString());
         textViewContentText.setText(entry.getCommentText());
 
-
-
+        final View originView = view;
         if(entry.getTotalReplyCount() > 0) {
             textViewReplyCount.setText(entry.getTotalReplyCount() + " 개의 답글");
             textViewReplyCount.setVisibility(View.VISIBLE);
-            final View originView = view;
             textViewReplyCount.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    textViewReplyCount.setVisibility(View.GONE);
+                    ListView replyListView = originView.findViewById(R.id.reply_list_view);
+                    replyListView.setVisibility(View.VISIBLE);
+                    replyListView.setAdapter(new CommentReplyAdapter(context));
 //                    textViewReplyCount.setVisibility(View.GONE);
 //                    TextView replyView = new TextView(context);
 //                    replyView.setText("ㅎㅇㅎㅇ1");
@@ -89,6 +90,7 @@ public class CommentAdapter extends BaseAdapter {
 //                    ((RelativeLayout)originView).addView(replyView, ((RelativeLayout) originView).getChildCount() - 1);
 //                    ((RelativeLayout)originView).addView(replyView2, ((RelativeLayout)originView).getChildCount() - 1);
 //                    ((RelativeLayout)originView).addView(replyView3, ((RelativeLayout)originView).getChildCount() - 1);
+
                 }
             });
         }
