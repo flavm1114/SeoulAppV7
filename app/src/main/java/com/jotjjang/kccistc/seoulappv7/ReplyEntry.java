@@ -5,40 +5,28 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CommentEntry {
-    private String commentId;
+public class ReplyEntry {
+    private String replyId;
     private String authorName;
     private String authorProfileImageUrl;
     private String commentText;
-    private String videoId;
-    private int likeCount;
+    private String parentId;
     private String publishedAt;
-    private boolean canReply;
-    private int totalReplyCount;
-    private boolean isPublic;
-    private ArrayList<CommentEntry> repliesList;
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private final long curLong = System.currentTimeMillis();
 
     private String publishedDateString;
 
-    public CommentEntry(String commentId, String authorName
+    public ReplyEntry(String replyId, String authorName
             , String authorProfileImageUrl, String commentText
-            , String videoId, int likeCount, String publishedAt
-            , boolean canReply, int totalReplyCount
-            , boolean isPublic) {
-        this.commentId = commentId;
+            , String parentId, String publishedAt) {
+        this.replyId = replyId;
         this.authorName = authorName;
         this.authorProfileImageUrl = authorProfileImageUrl;
         this.commentText = commentText;
-        this.videoId = videoId;
-        this.likeCount = likeCount;
+        this.parentId = parentId;
         this.publishedAt = publishedAt;
-        this.canReply = canReply;
-        this.totalReplyCount = totalReplyCount;
-        this.isPublic = isPublic;
-        this.repliesList = new ArrayList<>();
         try {
             this.publishedDateString = convertToStringPublishedDate(publishedAt);
         } catch (ParseException e) {
@@ -46,88 +34,28 @@ public class CommentEntry {
         }
     }
 
-    public String getCommentId() {
-        return commentId;
-    }
-
-    public void setCommentId(String commentId) {
-        this.commentId = commentId;
+    public String getReplyId() {
+        return replyId;
     }
 
     public String getAuthorName() {
         return authorName;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
-    }
-
     public String getAuthorProfileImageUrl() {
         return authorProfileImageUrl;
-    }
-
-    public void setAuthorProfileImageUrl(String authorProfileImageUrl) {
-        this.authorProfileImageUrl = authorProfileImageUrl;
     }
 
     public String getCommentText() {
         return commentText;
     }
 
-    public void setCommentText(String commentText) {
-        this.commentText = commentText;
-    }
-
-    public String getVideoId() {
-        return videoId;
-    }
-
-    public void setVideoId(String videoId) {
-        this.videoId = videoId;
-    }
-
-    public int getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
+    public String getParentId() {
+        return parentId;
     }
 
     public String getPublishedAt() {
         return publishedAt;
-    }
-
-    public void setPublishedAt(String publishedAt) {
-        this.publishedAt = publishedAt;
-    }
-
-    public boolean isCanReply() {
-        return canReply;
-    }
-
-    public void setCanReply(boolean canReply) {
-        this.canReply = canReply;
-    }
-
-    public int getTotalReplyCount() {
-        return totalReplyCount;
-    }
-
-    public void setTotalReplyCount(int totalReplyCount) {
-        this.totalReplyCount = totalReplyCount;
-    }
-
-    public boolean isPublic() {
-        return isPublic;
-    }
-
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
-    }
-
-    public ArrayList<CommentEntry> getRepliesList() {
-        return repliesList;
     }
 
     public String getPublishedDateString() {

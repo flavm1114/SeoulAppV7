@@ -125,10 +125,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
             <fragment
-                class="com.jotjjang.kccistc.seoulappv7.CommentFragment"
+                class="com.jotjjang.kccistc.seoulappv7.ExpandableCommentFragment"
                 android:id="@+id/comment_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent" >
+            </fragment>
             <ProgressBar
                 android:id="@+id/loading_progress_bar"
                 android:layout_width="60dp"

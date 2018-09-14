@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity
     //layout contents FOR activity, youtube
     private VideoListFragment videoListFragment;
     private VideoFragment videoFragment;
-    private CommentFragment commentFragment;
+    private ExpandableCommentFragment commentFragment;
     private View mainContainer;
     private View videoContainer;
     private View listContainer;
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         //layout contents FOR activity, youtube
         videoFragment = (VideoFragment)getFragmentManager().findFragmentById(R.id.video_fragment);
         videoListFragment = (VideoListFragment)getFragmentManager().findFragmentById(R.id.list_fragment);
-        commentFragment = (CommentFragment)getFragmentManager().findFragmentById(R.id.comment_fragment);
+        commentFragment = (ExpandableCommentFragment) getFragmentManager().findFragmentById(R.id.comment_fragment);
         getFragmentManager().beginTransaction().hide(commentFragment).commit();
         mainContainer = findViewById(R.id.main_container);
         videoContainer = findViewById(R.id.video_container);
@@ -825,10 +825,10 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void result) {
-            if(commentFragment.getListView().getFooterViewsCount() == 0 && resultList.size() == 0)
+            if(commentFragment.getExpandableListView().getFooterViewsCount() == 0 && resultList.size() == 0)
             {
                 commentFragment.addFooterNoMore();
-            } else if(commentFragment.getListView().getFooterViewsCount() > 0 && resultList.size() > 0)
+            } else if(commentFragment.getExpandableListView().getFooterViewsCount() > 0 && resultList.size() > 0)
             {
                 commentFragment.removeFooter();
             }

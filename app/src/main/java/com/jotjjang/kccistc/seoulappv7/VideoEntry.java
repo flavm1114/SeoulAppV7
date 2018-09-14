@@ -128,23 +128,23 @@ public class VideoEntry implements Serializable{
         long diffTime = (curLong - regTime) / 1000;
 
         String msg = "x";
-        if(diffTime < TIME_MAXIMUM.SEC) {
+        if(diffTime < TimeMaximum.SEC) {
             // sec
             msg = diffTime + "초전";
-        } else if ((diffTime /= TIME_MAXIMUM.SEC) < TIME_MAXIMUM.MIN) {
+        } else if ((diffTime /= TimeMaximum.SEC) < TimeMaximum.MIN) {
             // min
             msg = diffTime + "분전";
-        } else if ((diffTime /= TIME_MAXIMUM.MIN) < TIME_MAXIMUM.HOUR) {
+        } else if ((diffTime /= TimeMaximum.MIN) < TimeMaximum.HOUR) {
             // hour
             msg = (diffTime ) + "시간전";
-        } else if ((diffTime /= TIME_MAXIMUM.HOUR) < TIME_MAXIMUM.DAY) {
+        } else if ((diffTime /= TimeMaximum.HOUR) < TimeMaximum.DAY) {
             // day
             msg = (diffTime ) + "일전";
-        } else if ((diffTime /= TIME_MAXIMUM.DAY) < TIME_MAXIMUM.MONTH) {
+        } else if ((diffTime /= TimeMaximum.DAY) < TimeMaximum.MONTH) {
             // day
             msg = (diffTime ) + "달전";
         } else {
-            diffTime /= TIME_MAXIMUM.MONTH;
+            diffTime /= TimeMaximum.MONTH;
             msg = (diffTime) + "년전";
         }
         return msg;
@@ -166,13 +166,5 @@ public class VideoEntry implements Serializable{
             msg = (viewCount / 100000000)+"억";
         }
         return msg;
-    }
-
-    private static class TIME_MAXIMUM {
-        public static final int SEC = 60;
-        public static final int MIN = 60;
-        public static final int HOUR = 24;
-        public static final int DAY = 30;
-        public static final int MONTH = 12;
     }
 }

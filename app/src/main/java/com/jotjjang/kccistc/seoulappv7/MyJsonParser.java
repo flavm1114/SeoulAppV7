@@ -547,9 +547,9 @@ public class MyJsonParser {
 
     public static ArrayList<CommentEntry> parseYoutubeComments(JSONObject jsonObject) throws JSONException {
         if(jsonObject.isNull("nextPageToken") == false) {
-            CommentFragment.nextCommentToken = jsonObject.getString("nextPageToken");
+            ExpandableCommentFragment.nextCommentToken = jsonObject.getString("nextPageToken");
         } else {
-            CommentFragment.nextCommentToken = null;
+            ExpandableCommentFragment.nextCommentToken = null;
         }
         ArrayList<CommentEntry> commentEntryArrayList = new ArrayList<>();
         JSONArray contacts = jsonObject.getJSONArray("items");
@@ -600,4 +600,87 @@ public class MyJsonParser {
         }
         return commentEntryArrayList;
     }
+
+//    public static JSONObject getYoutubeReply(String commentId) {
+//        String url = "https://www.googleapis.com/youtube/v3/commentThreads"
+//                + "?part=id,snippet"
+//                + "&key=" + DeveloperKey.DEVELOPER_KEY
+//                + "&parentId=" + commentId
+//                + "&textFormat=plainText"
+//                + "&maxResults=" + 100;
+//
+//        HttpGet httpGet = new HttpGet(url);
+//        HttpClient client = new DefaultHttpClient();
+//        HttpResponse response;
+//        StringBuilder stringBuilder = new StringBuilder();
+//
+//        try {
+//            response = client.execute(httpGet);
+//            HttpEntity entity = response.getEntity();
+//            InputStream stream = entity.getContent();
+//            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+//            BufferedReader reader = new BufferedReader(isr);
+//
+//            String b;
+//            while((b = reader.readLine()) != null)
+//            {
+//                stringBuilder.append(b);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            jsonObject = new JSONObject(stringBuilder.toString());
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return jsonObject;
+//    }
+
+//    public static ArrayList<CommentEntry> parseYoutubeReplies(JSONObject jsonObject) throws JSONException {
+//        ArrayList<CommentEntry> commentEntryArrayList = new ArrayList<>();
+//        JSONArray contacts = jsonObject.getJSONArray("items");
+//        for (int i = 0; i < contacts.length(); i++) {
+//            JSONObject c = contacts.getJSONObject(i);
+//            String kind = c.getString("kind");
+//            if (kind.equals("youtube#comment")) {
+//                String replyId = c.getString("id");
+//                JSONObject snippet = c.getJSONObject("snippet");
+//                String parentId = snippet.getString("parentId");
+//                String authorName = snippet.getString("authorDisplayName");
+//                String authorProfileImageUrl = snippet.getString("authorProfileImageUrl");
+//                String replyText = snippet.getString("textDisplay");
+//                String publishedAt = snippet.getString("publishedAt").substring(0, 19);
+//
+//                ReplyEntry replyEntry = new ReplyEntry(
+//                        replyId, authorName, authorProfileImageUrl
+//                        , replyText, parentId, publishedAt);
+//                if (totalReplyCount > 0) {
+//                    JSONObject replies = c.getJSONObject("replies");
+//                    JSONArray comments = replies.getJSONArray("comments");
+//                    for (int j = 0; j < comments.length(); j++) {
+//                        JSONObject replyItem = comments.getJSONObject(j);
+//                        String reply_commentId = replyItem.getString("id");
+//                        JSONObject reply_snippet = replyItem.getJSONObject("snippet");
+//                        String reply_authorName = reply_snippet.getString("authorDisplayName");
+//                        String reply_authorProfileImageUrl = reply_snippet.getString("authorProfileImageUrl");
+//                        String reply_videoId = reply_snippet.getString("videoId");
+//                        String reply_commentText = reply_snippet.getString("textDisplay");
+//                        int reply_likeCount = reply_snippet.getInt("likeCount");
+//                        String reply_publishedAt = reply_snippet.getString("publishedAt").substring(0, 19);
+//
+//                        CommentEntry replyEntry = new CommentEntry(reply_commentId, reply_authorName
+//                                , reply_authorProfileImageUrl, reply_commentText, reply_videoId
+//                                , reply_likeCount, reply_publishedAt, false, 0, true);
+//                        commentEntry.getRepliesList().add(replyEntry);
+//                    }
+//                }
+//                commentEntryArrayList.add(commentEntry);
+//            }
+//        }
+//        return commentEntryArrayList;
+//    }
 }

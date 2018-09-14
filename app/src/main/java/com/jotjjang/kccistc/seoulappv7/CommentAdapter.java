@@ -73,10 +73,10 @@ public class CommentAdapter extends BaseAdapter {
             textViewReplyCount.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    textViewReplyCount.setVisibility(View.GONE);
-                    ListView replyListView = originView.findViewById(R.id.reply_list_view);
-                    replyListView.setVisibility(View.VISIBLE);
-                    replyListView.setAdapter(new CommentReplyAdapter(context));
+//                    textViewReplyCount.setVisibility(View.GONE);
+//                    ListView replyListView = originView.findViewById(R.id.reply_list_view);
+//                    replyListView.setVisibility(View.VISIBLE);
+                   // replyListView.setAdapter(new CommentReplyAdapter(context));
 //                    textViewReplyCount.setVisibility(View.GONE);
 //                    TextView replyView = new TextView(context);
 //                    replyView.setText("ㅎㅇㅎㅇ1");
