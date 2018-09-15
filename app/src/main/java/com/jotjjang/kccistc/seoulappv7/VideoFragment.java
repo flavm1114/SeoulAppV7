@@ -1,12 +1,7 @@
 package com.jotjjang.kccistc.seoulappv7;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;

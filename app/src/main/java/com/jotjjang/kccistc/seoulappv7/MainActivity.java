@@ -6,8 +6,6 @@ import android.annotation.TargetApi;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,6 +44,15 @@ public class MainActivity extends AppCompatActivity
     public static final int ANIMATION_DURATION_MILLIS = 300;
     /** The request code when calling startActivityForResult to recover from an API service error. */
     public static final int RECOVERY_DIALOG_REQUEST = 1;
+
+    public final int CATEGORY_ID_SPORTS = 17;
+    public final int CATEGORY_ID_ANIMAL = 15;
+    public final int CATEGORY_ID_MUSIC = 10;
+    public final int CATEGORY_ID_GAME = 20;
+    public final int CATEGORY_ID_ENTERTAINMENT = 24;
+
+    public static String mostPopularPageToken = null;
+    public static int category_state = 17;
 
     //layout contents FOR activity, youtube
     private VideoListFragment videoListFragment;
@@ -404,20 +411,10 @@ public class MainActivity extends AppCompatActivity
             {
                 item.setChecked(false);
             }
-        } else if (id == R.id.nav_sports) {
-            if(isLoading == false) {
-                isLoading = true;
-                titleTextView.setText(R.string.category_name_6);
-                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SPORTS);
-                asyncTask = new RequestTask().execute();
-            } else
-            {
-                item.setChecked(false);
-            }
         } else if (id == R.id.nav_humor) {
             if(isLoading == false) {
                 isLoading = true;
-                titleTextView.setText(R.string.category_name_7);
+                titleTextView.setText(R.string.category_name_6);
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_HUMOR);
                 asyncTask = new RequestTask().execute();
             } else
@@ -427,13 +424,47 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_kpop) {
             if(isLoading == false) {
                 isLoading = true;
-                titleTextView.setText(R.string.category_name_8);
+                titleTextView.setText(R.string.category_name_7);
                 SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_KPOP);
                 asyncTask = new RequestTask().execute();
             } else
             {
                 item.setChecked(false);
             }
+        } else if (id == R.id.nav_sports) {
+            if(isLoading == false) {
+                isLoading = true;
+                titleTextView.setText(R.string.category_name_8);
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SPORTS);
+                asyncTask = new RequestTask().execute();
+            } else
+            {
+                item.setChecked(false);
+            }
+        } else if (id == R.id.nav_animal) {
+            if(isLoading == false) {
+                isLoading = true;
+                titleTextView.setText(R.string.category_name_9);
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_MOST_POPULAR);
+                category_state = CATEGORY_ID_ANIMAL;
+                asyncTask = new MostPopularTask().execute();
+            } else item.setChecked(false);
+        } else if (id == R.id.nav_entertainment) {
+            if(isLoading == false) {
+                isLoading = true;
+                titleTextView.setText(R.string.category_name_10);
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_MOST_POPULAR);
+                category_state = CATEGORY_ID_ENTERTAINMENT;
+                asyncTask = new MostPopularTask().execute();
+            } else item.setChecked(false);
+        } else if (id == R.id.nav_game) {
+            if(isLoading == false) {
+                isLoading = true;
+                titleTextView.setText(R.string.category_name_11);
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_MOST_POPULAR);
+                category_state = CATEGORY_ID_GAME;
+                asyncTask = new MostPopularTask().execute();
+            } else item.setChecked(false);
         }
 
         if(isTransacting == false) {
@@ -477,6 +508,9 @@ public class MainActivity extends AppCompatActivity
             if(isLoading == false && SearchOptionState.getTopicState() == SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP) {
                 isLoading = true;
                 asyncTask = new HotClipNextTask().execute();
+            } else if (isLoading == false && SearchOptionState.getTopicState() == SearchOptionState.TopicState.TOPIC_STATE_MOST_POPULAR) {
+                isLoading = true;
+                asyncTask = new MostPopularNextTask().execute();
             } else if (isLoading == false && SearchOptionState.getTopicState() != SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP) {
                 isLoading = true;
                 asyncTask = new NextTask().execute();
@@ -835,6 +869,81 @@ public class MainActivity extends AppCompatActivity
 
             loadingProgressBar.setVisibility(View.GONE);
             commentFragment.addCommentItemList(resultList);
+        }
+    }
+
+    private class MostPopularTask extends AsyncTask<Void, Void, Void> {
+        ArrayList<VideoEntry> resultList = new ArrayList<>();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loadingProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                resultList = MyJsonParser.parseYoutubeMostPopular(
+                        MyJsonParser.getYoutubeMostPopular(category_state,10));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            if(videoListFragment.getListView().getFooterViewsCount() == 0 && resultList.size() == 0)
+            {
+                videoListFragment.addFooterNoMore();
+            } else if(videoListFragment.getListView().getFooterViewsCount() > 0 && resultList.size() > 0)
+            {
+                videoListFragment.removeFooter();
+            }
+            videoListFragment.setUnFocusCheckdItem();
+            videoListFragment.clearVideoEntries();
+            videoListFragment.addVideoEntries(resultList);
+            videoListFragment.scrollToTop();
+            loadingProgressBar.setVisibility(View.GONE);
+            isLoading = false;
+        }
+    }
+
+    private class MostPopularNextTask extends AsyncTask<Void, Void, Void> {
+        ArrayList<VideoEntry> resultList = new ArrayList<>();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loadingProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                resultList = MyJsonParser.parseYoutubeMostPopular(
+                        MyJsonParser.getYoutubeMostPopular(category_state, MainActivity.mostPopularPageToken, 5));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            if(videoListFragment.getListView().getFooterViewsCount() == 0 && resultList.size() == 0)
+            {
+                videoListFragment.addFooterNoMore();
+            } else if(videoListFragment.getListView().getFooterViewsCount() > 0 && resultList.size() > 0)
+            {
+                videoListFragment.removeFooter();
+            }
+            videoListFragment.addVideoEntries(resultList);
+            loadingProgressBar.setVisibility(View.GONE);
+            isLoading = false;
         }
     }
 }

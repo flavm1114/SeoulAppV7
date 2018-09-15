@@ -32,17 +32,29 @@
                 android:icon="@drawable/ic_news"
                 android:title="@string/category_name_5" />
             <item
-                android:id="@+id/nav_sports"
-                android:icon="@drawable/ic_running"
-                android:title="@string/category_name_6" />
-            <item
                 android:id="@+id/nav_humor"
                 android:icon="@drawable/ic_smile"
-                android:title="@string/category_name_7" />
+                android:title="@string/category_name_6" />
             <item
                 android:id="@+id/nav_kpop"
                 android:icon="@drawable/ic_quaver_outline"
-                android:title="@string/category_name_8"/>
+                android:title="@string/category_name_7"/>
+            <item
+                android:id="@+id/nav_sports"
+                android:icon="@drawable/ic_running"
+                android:title="@string/category_name_8" />
+            <item
+                android:id="@+id/nav_animal"
+                android:icon="@drawable/ic_smile"
+                android:title="@string/category_name_9" />
+            <item
+                android:id="@+id/nav_entertainment"
+                android:icon="@drawable/ic_smile"
+                android:title="@string/category_name_10" />
+            <item
+                android:id="@+id/nav_game"
+                android:icon="@drawable/ic_smile"
+                android:title="@string/category_name_11"/>
         </group>
     </group>
 </menu>

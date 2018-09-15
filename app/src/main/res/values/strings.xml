@@ -23,9 +23,12 @@
     <string name="category_name_3">서울의 축제</string>
     <string name="category_name_4">맛있는 서울</string>
     <string name="category_name_5">뉴스</string>
-    <string name="category_name_6">스포츠</string>
-    <string name="category_name_7">웃긴영상</string>
-    <string name="category_name_8">K-POP</string>
+    <string name="category_name_6">웃긴영상</string>
+    <string name="category_name_7">K-POP</string>
+    <string name="category_name_8">스포츠</string>
+    <string name="category_name_9">동물</string>
+    <string name="category_name_10">엔터테인먼트</string>
+    <string name="category_name_11">게임</string>
 
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
 </resources>

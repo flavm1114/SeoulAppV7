@@ -55,8 +55,8 @@ public class ExpandableCommentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_comment,container,false);
         expandableListView = rootView.findViewById(R.id.expandable_list_view);
-        expandableListView.setItemsCanFocus(false);
-        expandableListView.setClickable(false);
+        //expandableListView.setItemsCanFocus(false);
+        //expandableListView.setClickable(false);
         expandableListView.setSelector(R.drawable.empty_selector);
         //expandableListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
         //expandableListView.setGroupIndicator(null);

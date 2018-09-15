@@ -1,7 +1,5 @@
 package com.jotjjang.kccistc.seoulappv7;
 
-import android.util.Log;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -68,17 +66,6 @@ public class MyJsonParser {
                         + "&type=video"
                         + "&safeSearch=strict"
                         + "&videoEmbeddable=true");
-//        Log.e("zzzzzz","https://www.googleapis.com/youtube/v3/search?"
-//                + "part=snippet&q=" + searchKeyWord
-//                + "&key=" + DeveloperKey.DEVELOPER_KEY
-//                + "&publishedBefore=" + beforeDateKeyWord
-//                + "&publishedAfter=" + afterDateKeyWord
-//                + "&order=" + orderKeyWord
-//                + "&maxResults=" + count
-//                + "&regionCode=KR"
-//                + "&type=video"
-//                + "&safeSearch=strict"
-//                + "&videoEmbeddable=true");
 
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;
@@ -569,6 +556,7 @@ public class MyJsonParser {
                 String publishedAt = snippet2.getString("publishedAt").substring(0, 19);
                 boolean canReply = snippet.getBoolean("canReply");
                 int totalReplyCount = snippet.getInt("totalReplyCount");
+
                 boolean isPublic = snippet.getBoolean("isPublic");
 
                 CommentEntry commentEntry = new CommentEntry(
@@ -601,86 +589,115 @@ public class MyJsonParser {
         return commentEntryArrayList;
     }
 
-//    public static JSONObject getYoutubeReply(String commentId) {
-//        String url = "https://www.googleapis.com/youtube/v3/commentThreads"
-//                + "?part=id,snippet"
-//                + "&key=" + DeveloperKey.DEVELOPER_KEY
-//                + "&parentId=" + commentId
-//                + "&textFormat=plainText"
-//                + "&maxResults=" + 100;
-//
-//        HttpGet httpGet = new HttpGet(url);
-//        HttpClient client = new DefaultHttpClient();
-//        HttpResponse response;
-//        StringBuilder stringBuilder = new StringBuilder();
-//
-//        try {
-//            response = client.execute(httpGet);
-//            HttpEntity entity = response.getEntity();
-//            InputStream stream = entity.getContent();
-//            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
-//            BufferedReader reader = new BufferedReader(isr);
-//
-//            String b;
-//            while((b = reader.readLine()) != null)
-//            {
-//                stringBuilder.append(b);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        JSONObject jsonObject = new JSONObject();
-//        try {
-//            jsonObject = new JSONObject(stringBuilder.toString());
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return jsonObject;
-//    }
+    public static JSONObject getYoutubeMostPopular(int categoryId, int maxResults) {
+        String url = "https://www.googleapis.com/youtube/v3/videos"
+                + "?part=id,snippet,statistics"
+                + "&key=" + DeveloperKey.DEVELOPER_KEY
+                + "&chart=mostPopular"
+                + "&regionCode=KR"
+                + "&maxResults=" + maxResults
+                + "&videoCategoryId=" + categoryId;
 
-//    public static ArrayList<CommentEntry> parseYoutubeReplies(JSONObject jsonObject) throws JSONException {
-//        ArrayList<CommentEntry> commentEntryArrayList = new ArrayList<>();
-//        JSONArray contacts = jsonObject.getJSONArray("items");
-//        for (int i = 0; i < contacts.length(); i++) {
-//            JSONObject c = contacts.getJSONObject(i);
-//            String kind = c.getString("kind");
-//            if (kind.equals("youtube#comment")) {
-//                String replyId = c.getString("id");
-//                JSONObject snippet = c.getJSONObject("snippet");
-//                String parentId = snippet.getString("parentId");
-//                String authorName = snippet.getString("authorDisplayName");
-//                String authorProfileImageUrl = snippet.getString("authorProfileImageUrl");
-//                String replyText = snippet.getString("textDisplay");
-//                String publishedAt = snippet.getString("publishedAt").substring(0, 19);
-//
-//                ReplyEntry replyEntry = new ReplyEntry(
-//                        replyId, authorName, authorProfileImageUrl
-//                        , replyText, parentId, publishedAt);
-//                if (totalReplyCount > 0) {
-//                    JSONObject replies = c.getJSONObject("replies");
-//                    JSONArray comments = replies.getJSONArray("comments");
-//                    for (int j = 0; j < comments.length(); j++) {
-//                        JSONObject replyItem = comments.getJSONObject(j);
-//                        String reply_commentId = replyItem.getString("id");
-//                        JSONObject reply_snippet = replyItem.getJSONObject("snippet");
-//                        String reply_authorName = reply_snippet.getString("authorDisplayName");
-//                        String reply_authorProfileImageUrl = reply_snippet.getString("authorProfileImageUrl");
-//                        String reply_videoId = reply_snippet.getString("videoId");
-//                        String reply_commentText = reply_snippet.getString("textDisplay");
-//                        int reply_likeCount = reply_snippet.getInt("likeCount");
-//                        String reply_publishedAt = reply_snippet.getString("publishedAt").substring(0, 19);
-//
-//                        CommentEntry replyEntry = new CommentEntry(reply_commentId, reply_authorName
-//                                , reply_authorProfileImageUrl, reply_commentText, reply_videoId
-//                                , reply_likeCount, reply_publishedAt, false, 0, true);
-//                        commentEntry.getRepliesList().add(replyEntry);
-//                    }
-//                }
-//                commentEntryArrayList.add(commentEntry);
-//            }
-//        }
-//        return commentEntryArrayList;
-//    }
+        HttpGet httpGet = new HttpGet(url);
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
+            {
+                stringBuilder.append(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static JSONObject getYoutubeMostPopular(int categoryId, String pageToken, int maxResults) {
+        String url = "https://www.googleapis.com/youtube/v3/videos"
+                + "?part=id,snippet,statistics"
+                + "&key=" + DeveloperKey.DEVELOPER_KEY
+                + "&chart=mostPopular"
+                + "&regionCode=KR"
+                + "&maxResults=" + maxResults
+                + "&videoCategoryId=" + categoryId
+                + "&pageToken=" + pageToken;
+
+        HttpGet httpGet = new HttpGet(url);
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
+            {
+                stringBuilder.append(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static ArrayList<VideoEntry> parseYoutubeMostPopular(JSONObject jsonObject) throws JSONException {
+        if(jsonObject.has("nextPageToken") == true) {
+           MainActivity.mostPopularPageToken = jsonObject.getString("nextPageToken");
+        } else {
+            MainActivity.mostPopularPageToken = null;
+        }
+        ArrayList<VideoEntry> videoEntryArrayList = new ArrayList<>();
+        JSONArray contacts = jsonObject.getJSONArray("items");
+        for (int i = 0; i < contacts.length(); i++) {
+            JSONObject c = contacts.getJSONObject(i);
+            JSONObject snippet = c.getJSONObject("snippet");
+            JSONObject statistics = c.getJSONObject("statistics");
+            String title = null;
+            String description = null;
+            String channelTitle = null;
+            title = snippet.getString("title");
+            description = snippet.getString("description");
+            channelTitle = snippet.getString("channelTitle");
+            String videoId = c.getString("id");
+            String publishedDate = snippet.getString("publishedAt").substring(0,19);
+            String imgUrl = snippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
+            int viewCount = Integer.parseInt(statistics.getString("viewCount"));
+            int commentCount = 0;
+            if(statistics.has("commentCount")) {
+                commentCount = Integer.parseInt(statistics.getString("commentCount"));
+            }
+            videoEntryArrayList.add(new VideoEntry(title,videoId,publishedDate,description,channelTitle,imgUrl,viewCount,commentCount));
+        }
+        return videoEntryArrayList;
+    }
 }

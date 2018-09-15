@@ -88,16 +88,17 @@ public class ExpandableCommentAdapter extends BaseExpandableListAdapter {
         textViewPublishedAt.setText(entry.getPublishedDateString());
         textViewContentText.setText(entry.getCommentText());
 
-        final View originView = view;
+
         if(entry.getTotalReplyCount() > 0) {
             textViewReplyCount.setText(entry.getTotalReplyCount() + " 개의 답글");
             textViewReplyCount.setVisibility(View.VISIBLE);
             textViewReplyCount.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    textViewReplyCount.setVisibility(View.GONE);
                 }
             });
+        } else {
+            textViewReplyCount.setVisibility(View.GONE);
         }
         return view;
     }
@@ -105,14 +106,22 @@ public class ExpandableCommentAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         View view = convertView;
-        CommentEntry entry = groupList.get(groupPosition);
+        CommentEntry entry = childList.get(groupPosition).get(childPosition);
 
         if (view == null) {
             view = inflater.inflate(R.layout.comment_reply_item, parent, false);
         }
 
-        TextView textView = view.findViewById(R.id.comment_reply_textView);
-        textView.setText(childList.get(groupPosition).get(childPosition).getAuthorName());
+        RelativeLayout label = view.findViewById(R.id.reply_label);
+        ImageView imageViewProfile = view.findViewById(R.id.reply_authorProfileImageUrl);
+        TextView textViewAuthorName = view.findViewById(R.id.reply_authorName);
+        TextView textViewPublishedAt = view.findViewById(R.id.reply_publishedAt);
+        TextView textViewContentText = view.findViewById(R.id.reply_content_text);
+
+        Glide.with(context).load(entry.getAuthorProfileImageUrl()).into(imageViewProfile);
+        textViewAuthorName.setText(entry.getAuthorName());
+        textViewPublishedAt.setText(entry.getPublishedDateString());
+        textViewContentText.setText(entry.getCommentText());
 
         return view;
     }

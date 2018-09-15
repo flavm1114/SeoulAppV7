@@ -17,6 +17,7 @@ public class SearchOptionState {
         TOPIC_STATE_HUMOR,
         TOPIC_STATE_KPOP,
         TOPIC_STATE_ESPORTS,
+        TOPIC_STATE_MOST_POPULAR
     }
 
     public enum DateState {

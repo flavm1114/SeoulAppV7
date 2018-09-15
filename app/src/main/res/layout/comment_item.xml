@@ -3,7 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingVertical="25dp"
+    android:paddingTop="25dp"
+    android:paddingBottom="10dp"
     android:paddingHorizontal="30dp"
     android:gravity="center"
     android:id="@+id/comment_label">
@@ -41,25 +42,14 @@
         android:layout_alignLeft="@id/comment_authorName"
         android:layout_below="@id/comment_authorName" />
 
-    <FrameLayout
+    <TextView
+        android:layout_marginTop="12dp"
+        android:id="@+id/comment_reply_count"
+        android:fontFamily="@font/seoul_namsan_l"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@id/comment_content_text"
         android:layout_below="@id/comment_content_text"
-        >
-        <TextView
-            android:visibility="gone"
-            android:layout_marginTop="12dp"
-            android:id="@+id/comment_reply_count"
-            android:fontFamily="@font/seoul_namsan_l"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-        <ProgressBar
-            android:visibility="gone"
-            android:id="@+id/loading_reply_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
+        />
 
 </RelativeLayout>

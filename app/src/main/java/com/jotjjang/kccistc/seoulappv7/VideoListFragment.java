@@ -1,29 +1,17 @@
 package com.jotjjang.kccistc.seoulappv7;
 
 import android.app.ListFragment;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.Checkable;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class VideoListFragment extends ListFragment {
 
@@ -90,22 +78,7 @@ public class VideoListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-//        Log.e("gdgdVIDEO_LIST_SIZE",VIDEO_LIST.size()+"");
         if(position < VIDEO_LIST.size()) {
-//            for (int i = 0; i < VIDEO_LIST.size(); i++) {
-//                if (i == position) {
-//                    setHighlight(i, true);
-//                } else {
-//                    setHighlight(i, false);
-//                }
-//            }
-////            l.getchil
-////            l.getChildAt(2).findViewById(R.id.item_label).setBackgroundColor(Color.WHITE);
-//                //((LinearLayout)l.getChildAt(i)).setBackgroundColor(Color.WHITE);
-//            }
-//        Log.e("getChildCount",l.getChildCount()+"");
-//        ((LinearLayout)v).setBackgroundColor(Color.RED);
-
             String videoId = VIDEO_LIST.get(position).getVideoId();
 
             VideoFragment videoFragment =
