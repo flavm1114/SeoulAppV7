@@ -700,4 +700,111 @@ public class MyJsonParser {
         }
         return videoEntryArrayList;
     }
+
+    public static JSONObject getYoutubeReply(String commentId, int maxResults) {
+        String url = "https://www.googleapis.com/youtube/v3/comments"
+                + "?part=id,snippet"
+                + "&key=" + DeveloperKey.DEVELOPER_KEY
+                + "&parentId=" + commentId
+                + "&textFormat=plainText"
+                + "&maxResults=" + maxResults;
+
+        HttpGet httpGet = new HttpGet(url);
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
+            {
+                stringBuilder.append(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static JSONObject getYoutubeReply(String commentId, String pageToken, int maxResults) {
+        String url = "https://www.googleapis.com/youtube/v3/comments"
+                + "?part=id,snippet"
+                + "&key=" + DeveloperKey.DEVELOPER_KEY
+                + "&parentId=" + commentId
+                + "&textFormat=plainText"
+                + "&maxResults=" + maxResults
+                + "&pageToken=" + pageToken;
+
+        HttpGet httpGet = new HttpGet(url);
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            InputStreamReader isr = new InputStreamReader(stream, "utf-8");
+            BufferedReader reader = new BufferedReader(isr);
+
+            String b;
+            while((b = reader.readLine()) != null)
+            {
+                stringBuilder.append(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static ArrayList<CommentEntry> parseYoutubeReplies(JSONObject jsonObject) throws JSONException {
+        if(jsonObject.isNull("nextPageToken") == false) {
+            ExpandableCommentFragment.nextReplyToken = jsonObject.getString("nextPageToken");
+        } else {
+            ExpandableCommentFragment.nextReplyToken = null;
+        }
+        ArrayList<CommentEntry> commentEntryArrayList = new ArrayList<>();
+        JSONArray contacts = jsonObject.getJSONArray("items");
+        for (int i = 0; i < contacts.length(); i++) {
+            JSONObject c = contacts.getJSONObject(i);
+            String kind = c.getString("kind");
+            if (kind.equals("youtube#comment")) {
+                String commentId = c.getString("id");
+                JSONObject snippet = c.getJSONObject("snippet");
+                String authorName = snippet.getString("authorDisplayName");
+                String authorProfileImageUrl = snippet.getString("authorProfileImageUrl");
+                String commentText = snippet.getString("textDisplay");
+                String publishedAt = snippet.getString("publishedAt").substring(0, 19);
+                CommentEntry commentEntry = new CommentEntry(
+                        commentId, authorName, authorProfileImageUrl
+                        , commentText, null, 0, publishedAt
+                        , false, 0, true);
+                commentEntryArrayList.add(commentEntry);
+            }
+        }
+        return commentEntryArrayList;
+    }
 }

@@ -218,7 +218,10 @@ public class MainActivity extends AppCompatActivity
         if(SearchOptionState.getTopicState() == SearchOptionState.TopicState.TOPIC_STATE_HOTCLIP) {
             menu.getItem(0).setEnabled(false);
             menu.getItem(1).setEnabled(false);
-        }else {
+        } else if(SearchOptionState.getTopicState() == SearchOptionState.TopicState.TOPIC_STATE_MOST_POPULAR) {
+            menu.getItem(0).setEnabled(false);
+            menu.getItem(1).setEnabled(false);
+        } else {
             menu.getItem(0).setEnabled(true);
             menu.getItem(1).setEnabled(true);
         }
@@ -425,22 +428,18 @@ public class MainActivity extends AppCompatActivity
             if(isLoading == false) {
                 isLoading = true;
                 titleTextView.setText(R.string.category_name_7);
-                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_KPOP);
-                asyncTask = new RequestTask().execute();
-            } else
-            {
-                item.setChecked(false);
-            }
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_MOST_POPULAR);
+                category_state = CATEGORY_ID_MUSIC;
+                asyncTask = new MostPopularTask().execute();
+            } else item.setChecked(false);
         } else if (id == R.id.nav_sports) {
             if(isLoading == false) {
                 isLoading = true;
                 titleTextView.setText(R.string.category_name_8);
-                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_SPORTS);
-                asyncTask = new RequestTask().execute();
-            } else
-            {
-                item.setChecked(false);
-            }
+                SearchOptionState.setTopicState(SearchOptionState.TopicState.TOPIC_STATE_MOST_POPULAR);
+                category_state = CATEGORY_ID_SPORTS;
+                asyncTask = new MostPopularTask().execute();
+            } else item.setChecked(false);
         } else if (id == R.id.nav_animal) {
             if(isLoading == false) {
                 isLoading = true;

@@ -12,6 +12,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -29,7 +30,10 @@ public class ExpandableCommentFragment extends Fragment {
     private boolean isLoading;
 
     public static String nextCommentToken;
+    public static String nextReplyToken;
     private ImageView noMoreImageView;
+
+    public static int clickedIndex = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,7 +61,7 @@ public class ExpandableCommentFragment extends Fragment {
         expandableListView = rootView.findViewById(R.id.expandable_list_view);
         //expandableListView.setItemsCanFocus(false);
         //expandableListView.setClickable(false);
-        expandableListView.setSelector(R.drawable.empty_selector);
+        //expandableListView.setSelector(R.drawable.empty_selector);
         //expandableListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
         //expandableListView.setGroupIndicator(null);
         expandableListView.setAdapter(adapter);
@@ -77,6 +81,18 @@ public class ExpandableCommentFragment extends Fragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 isScrollEnd = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
+            }
+        });
+
+        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v,
+                                        int groupPosition, long id) {
+                if(COMMENT_LIST.get(groupPosition).getTotalReplyCount() > 5) {
+                    clickedIndex = groupPosition;
+                    new ReplyTask().execute();
+                }
+                return false;
             }
         });
 
@@ -148,6 +164,40 @@ public class ExpandableCommentFragment extends Fragment {
             }
             progressBar.setVisibility(View.GONE);
             addCommentItemList(resultList);
+            isLoading = false;
+        }
+    }
+
+    private class ReplyTask extends AsyncTask<Void, Void, Void> {
+        ArrayList<CommentEntry> resultList = new ArrayList<>();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                resultList = MyJsonParser.parseYoutubeReplies(
+                        MyJsonParser.getYoutubeReply(
+                                COMMENT_LIST.get(clickedIndex).getCommentId(), 50));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            progressBar.setVisibility(View.GONE);
+            ArrayList<CommentEntry> replyList = REPLY_LIST.get(clickedIndex);
+            replyList.clear();
+            for(int i = 0; i < resultList.size(); i++) {
+                replyList.add(resultList.get(i));
+            }
+            adapter.notifyDataSetChanged();
             isLoading = false;
         }
     }
