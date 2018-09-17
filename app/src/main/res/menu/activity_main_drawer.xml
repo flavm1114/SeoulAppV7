@@ -45,15 +45,15 @@
                 android:title="@string/category_name_8" />
             <item
                 android:id="@+id/nav_animal"
-                android:icon="@drawable/ic_smile"
+                android:icon="@drawable/ic_dog_cute"
                 android:title="@string/category_name_9" />
             <item
                 android:id="@+id/nav_entertainment"
-                android:icon="@drawable/ic_smile"
+                android:icon="@drawable/ic_television"
                 android:title="@string/category_name_10" />
             <item
                 android:id="@+id/nav_game"
-                android:icon="@drawable/ic_smile"
+                android:icon="@drawable/ic_gamepad"
                 android:title="@string/category_name_11"/>
         </group>
     </group>
