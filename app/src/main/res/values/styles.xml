@@ -23,7 +23,7 @@
 
     <style name="AppTheme.OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@color/colorPrimaryBlue</item>
-        <item name="android:src">@drawable/ic_sort_by_attributes</item>
+        <item name="android:src">@drawable/ic_sort_black_26_34dp</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
