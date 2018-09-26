@@ -1,5 +1,7 @@
 package com.jotjjang.kccistc.seoulappv7;
 
+import android.util.Log;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -59,7 +61,7 @@ public class SearchOptionState {
         currentDateString = sdf.format(currentDate)+"Z";
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, -1);
+        calendar.add(Calendar.HOUR, -36);
         aDayAgoDateString = sdf.format(calendar.getTime())+"Z";
         calendar.setTime(currentDate);
         calendar.add(Calendar.DATE, -7);

@@ -3,6 +3,7 @@ package com.jotjjang.kccistc.seoulappv7;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class VideoEntry implements Serializable{
@@ -24,7 +25,7 @@ public class VideoEntry implements Serializable{
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final Date currentDate = SearchOptionState.getCurrentDate();
-    private final long curLong = System.currentTimeMillis();
+    private long curLong = System.currentTimeMillis();
 
     public VideoEntry(String title, String videoId, String publishedDate,
                       String description, String channelTitle, String thumbnailUrl_default)
